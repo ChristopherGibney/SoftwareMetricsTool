@@ -1,26 +1,23 @@
 package javaparser;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
-public class ParseGitRepo {
+public class ParseRemoteGitRepo {
 	
-	public ParseGitRepo(File repoFile) throws InvalidRemoteException, GitAPIException {
+	public ParseRemoteGitRepo(File repoFile, String repoLink) throws InvalidRemoteException, GitAPIException {
 	
-		//C:\\Users\\Chris\\Desktop\\TestRepo
 	
 		Git git = Git.cloneRepository()
-				.setURI("https://github.com/ChristopherGibney/SoftwareMEtricsTool")
+				.setURI(repoLink)
 				.setDirectory(repoFile)
 				.setCloneAllBranches(true)
 				.call();
-		
-	
-		
-		
+		//"https://github.com/ChristopherGibney/SoftwareMetricsTool"
 	}
 }
