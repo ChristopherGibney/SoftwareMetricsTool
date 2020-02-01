@@ -28,6 +28,8 @@ public class AnalysisRunner {
 		System.out.println("Enter 1 for local directory/project, 2 for local GitHub"
 							+ "repository or 3 for remote GitHub repository: ");
 		int fileType = userInput.nextInt();
+		//must call next line as nextInt does not consume \n
+		userInput.nextLine();
 		
 		
 		if (fileType == 1) {

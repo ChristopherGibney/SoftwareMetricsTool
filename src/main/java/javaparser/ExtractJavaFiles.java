@@ -31,12 +31,12 @@ public class ExtractJavaFiles {
 			 
 			 if (fileName.endsWith(".java")) {
 				String test = null;
-				try {
+				//try {
 					test = (f.getName().substring(0, f.getName().indexOf("."))) + "\n";
-					test += createFileString(fileName);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+					//test += createFileString(fileName);
+				//} catch (IOException e) {
+					//e.printStackTrace();
+				//}
 				
 				int i = 0;
 				
