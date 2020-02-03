@@ -20,4 +20,12 @@ public class ParseRemoteGitRepo {
 				.call();
 		//"https://github.com/ChristopherGibney/SoftwareMetricsTool"
 	}
+	
+	//**NOT IMPLEMENTED YET
+	public File[] returnAllVersions(File file) {
+		//return all older versions of the given file as an array using treewalk
+		File allVersions[] = new File[20];
+		
+		return allVersions;
+	}
 }

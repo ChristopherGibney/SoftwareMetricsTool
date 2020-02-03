@@ -43,8 +43,9 @@ public class AnalysisRunner {
 		if (fileType == 3) {
 			System.out.println("Enter link to remote GitHub repo: ");
 			String repoLink = userInput.nextLine();
-			System.out.println("Enter path to empty folder Remote repository can"
-								+ "be cloned into: ");
+			System.out.println("Enter path to empty folder Remote repository can "
+								+ "be cloned into in the form \n"
+								+ "C:\\\\Users\\\\Chris\\\\Desktop\\\\TestRepo: ");
 			String cloneRepoLocation = userInput.nextLine();
 			File cloneRepoToFile = new File(cloneRepoLocation);
 			analyseRemoteGitRepo(cloneRepoToFile, repoLink);
@@ -76,10 +77,12 @@ public class AnalysisRunner {
 		}
 		
 		ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(cloneRepo);
-		String repoJavaFiles[] = extractJavaFiles.returnJavaClassesStrings();
+		String repoJavaFilesStrings[] = extractJavaFiles.returnJavaClassesStrings();
+		File repoJavaFiles[] = extractJavaFiles.returnJavaFiles();
 		
 		for (int i = 0; i < repoJavaFiles.length; i++) {
-			System.out.println(repoJavaFiles[i]);
+			if (repoJavaFiles[i] != null)
+				System.out.println(repoJavaFilesStrings[i] + " //// " + repoJavaFiles[i].getAbsolutePath());
 		}
 	}
 }
