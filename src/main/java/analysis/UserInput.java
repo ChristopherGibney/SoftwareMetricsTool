@@ -3,6 +3,7 @@ package analysis;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,8 +19,12 @@ import com.github.javaparser.ast.CompilationUnit;
 
 
 public class UserInput {
+	
+	public boolean localDir = false, remoteGitRepo = false, localGitRepo = false;
+	public String repoLink = "";
+	public File rootFile;
 
-	public static void main(String[] args) throws IOException, InvalidRemoteException, GitAPIException {
+	public UserInput() throws IOException, InvalidRemoteException, GitAPIException {
 		
 		Scanner userInput = new Scanner(new InputStreamReader(System.in));
 		
@@ -31,53 +36,28 @@ public class UserInput {
 		//must call next line as nextInt does not consume \n
 		userInput.nextLine();
 		
-		
 		if (fileType == 1) {
+			localDir = true;
 			System.out.println("Enter full path to local directory/project: ");
 			String localPath = userInput.nextLine();
-			File localFile = new File(localPath);
-			analyseLocalDirectory(localFile);
+			rootFile = new File(localPath);
 		}
 		
-		
 		if (fileType == 3) {
+			remoteGitRepo = true;
 			System.out.println("Enter link to remote GitHub repo: ");
-			String repoLink = userInput.nextLine();
+			//repoLink = 
+			userInput.nextLine();
+			repoLink = "https://github.com/ChristopherGibney/SoftwareMetricsTool";
 			System.out.println("Enter path to empty folder Remote repository can "
 								+ "be cloned into in the form \n"
 								+ "C:\\\\Users\\\\Chris\\\\Desktop\\\\TestRepo: ");
-			String cloneRepoLocation = userInput.nextLine();
-			File cloneRepoToFile = new File(cloneRepoLocation);
-			analyseRemoteGitRepo(cloneRepoToFile, repoLink);
+			//String cloneRepoLocation = 
+			userInput.nextLine();
+			String cloneRepoLocation = "C:\\Users\\Chris\\Desktop\\TestRepo_1";
+			rootFile = new File(cloneRepoLocation);
 		}
 		//File root = new File("C:\\Users\\Chris\\Downloads\\eclipse-java-kepler-SR1-win32-x86_64\\SoftwareMetricsTool\\src\\main\\java");
-		
-		
 		//File repoFile = new File("C:\\Users\\Chris\\Desktop\\TestRepo");
-		
-	}
-	
-	private static void analyseLocalDirectory(File localFile) {
-		List<CompilationUnit> cuList = ParseDirectory.parse(localFile);
-		
-		for (CompilationUnit cu : cuList) {
-			int linesOfCode = LinesOfCode.getLinesOfCode(cu);
-			
-			System.out.println(cu.getParentNode().toString()+ ": " + linesOfCode + " Lines of code.");
-		}
-	}
-	
-	private static void analyseRemoteGitRepo(File cloneRepo, String repoLink) throws IOException, InvalidRemoteException, GitAPIException {
-		ParseRemoteGitRepo remoteGitRepo = new ParseRemoteGitRepo(cloneRepo, repoLink);
-		ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(cloneRepo);
-		
-		String repoJavaFilesStrings[] = extractJavaFiles.returnJavaClassesStrings();
-		File repoJavaFiles[] = extractJavaFiles.returnJavaFiles();
-		
-		for (int i = 0; i < repoJavaFiles.length; i++) {
-			if (repoJavaFiles[i] != null) {
-				File oldVersions[] = remoteGitRepo.returnAllVersions(repoJavaFiles[i]);
-			}
-		}
 	}
 }
