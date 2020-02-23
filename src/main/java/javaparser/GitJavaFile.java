@@ -20,6 +20,10 @@ public class GitJavaFile {
 		this.fileAllVersions.add(f);
 	}
 	
+	public ArrayList<File> getAllFileVersions() {
+		return this.fileAllVersions;
+	}
+	
 	public ArrayList<RevCommit> getCommits() {
 		return this.commits;
 	}

@@ -1,6 +1,8 @@
 package analysis;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,11 @@ public class AnalysisRunner {
 	private static void analyseRemoteGitRepo(File cloneRepo, String repoLink) throws IOException, InvalidRemoteException, GitAPIException {
 		ParseRemoteGitRepo remoteGitRepo = new ParseRemoteGitRepo(cloneRepo, repoLink);
 		ArrayList<GitJavaFile> filesWithCommits = remoteGitRepo.getFilesWithCommits();
+		
+		GitJavaFile gjf = filesWithCommits.get(0);
+		for (File f : gjf.getAllFileVersions()) {
+			System.out.println(createFileString(f.getAbsolutePath()));
+		}
 		//ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(cloneRepo);
 		
 		//String repoJavaFilesStrings[] = extractJavaFiles.returnJavaClassesStrings();
@@ -55,5 +62,23 @@ public class AnalysisRunner {
 				//File oldVersions[] = remoteGitRepo.returnAllVersions(repoJavaFiles[i]);
 			//}
 		//}
+	}
+	public static String createFileString(String filePath) throws IOException {
+		
+		StringBuilder fileAsString = new StringBuilder(1000);
+		BufferedReader r = new BufferedReader(new FileReader(filePath));
+
+		char[] chars = new char[2000];
+		String fileSegment = null;
+		int charsToRead = 0;
+		
+		while ((charsToRead = r.read(chars)) != -1) {
+			fileSegment = new String(chars, 0, charsToRead);
+			fileAsString.append(fileSegment);
+		}
+
+		r.close();
+
+		return  fileAsString.toString();	
 	}
 }

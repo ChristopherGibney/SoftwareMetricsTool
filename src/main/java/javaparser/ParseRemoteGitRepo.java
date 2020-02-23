@@ -1,6 +1,7 @@
 package javaparser;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +11,10 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -46,25 +49,51 @@ public class ParseRemoteGitRepo {
 		
 		for (GitJavaFile fwc : filesWithCommits) {
 			File f = fwc.getRepoFile();
+			int fileCounter = 0;
 			String filePath = getRepoRelativePath(f, repoFile.getName());
 			ArrayList<RevCommit> commits = fwc.getCommits();
 			System.out.println("**************** " + f.getAbsolutePath().replace("\\", "/"));
 			
 			for (RevCommit c : commits) {
-				RevTree tree = c.getTree();
-				TreeWalk tw = new TreeWalk(repo);
-				tw.addTree(tree);
-				tw.setRecursive(true);
-				tw.setFilter(PathFilter.create(filePath));
-				if (tw.next()) {
-					ObjectId objId = tw.getObjectId(0);
-					ObjectLoader loader = repo.open(objId);
-					String newFilePath = f.getAbsolutePath();
+				//git.checkout().setName(c.getName()).call();
+				//ExtractJavaFiles ejf = new ExtractJavaFiles(repo.getWorkTree());
+				git.checkout().setName(c.getName()).call();
+				Repository currentRepo = git.checkout().setName(c.getName()).getRepository();
+				
+				File checkedOutFile = new File(currentRepo.getWorkTree(), filePath);
+				fwc.addVersionOfFile(checkedOutFile);
+				//ObjectReader reader = repo.newObjectReader(); 
+				//RevWalk walk = new RevWalk(reader); 
+				///TreeWalk tw = new TreeWalk(repo, reader);
+				//ObjectId id = repo.resolve(c.getName());
+			    //RevCommit commit = walk.parseCommit(id);
+			    //RevTree tree = c.getTree();
+			    //tw.addTree(tree);
+			    //tw.setRecursive(true);
+				//ObjectId commitId = repo.resolve(c.getId().getName());
+				//RevTree tree = c.getTree();
+				//TreeWalk tw = new TreeWalk(repo);
+				//tw.addTree(new RevWalk(repo).parseTree(commitId));
+				
+				//tw.setRecursive(true);
+				//tw.setFilter(PathFilter.create(filePath));
+				//if (tw.next()) {
+					//ObjectId objId = tw.getObjectId(0);
+					//ObjectLoader loader = repo.open(objId);
+					//String newFilePath = f.getAbsolutePath().substring(0, f.getName().indexOf("."))
+						//					+ String.valueOf(fileCounter) + ".java";
+					//fileCounter++;
+					//File oldVersionOfFile = new File(newFilePath);
+					//FileOutputStream fos = new FileOutputStream(oldVersionOfFile);
+					//loader.copyTo(fos);
+					//fos.flush();
+					//fos.close();
+					//fwc.addVersionOfFile(oldVersionOfFile);
 					//need to create file here with same name as file f + counter int to get all versions
 					//of file and add to the gitjavafile object.
 					//use substring from 0 to . - 1 + counter to string + substring from . 
-				}
-				System.out.println(f.getAbsolutePath() + "----" + c.getFullMessage() + c.getCommitTime());
+				//}
+				//System.out.println(f.getAbsolutePath() + "----" + c.getFullMessage() + c.getCommitTime());
 			}
 		}
 		
