@@ -49,7 +49,10 @@ public class AnalysisRunner {
 		ArrayList<GitJavaFile> filesWithCommits = remoteGitRepo.getFilesWithCommits();
 		
 		GitJavaFile gjf = filesWithCommits.get(0);
+		File test = gjf.getRepoFile();
+		System.out.println("Test" + test.getName());
 		for (File f : gjf.getAllFileVersions()) {
+			System.out.println(f.getAbsolutePath() + "££££££££££££");
 			System.out.println(createFileString(f.getAbsolutePath()));
 		}
 		//ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(cloneRepo);
