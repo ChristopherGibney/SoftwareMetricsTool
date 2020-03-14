@@ -1,20 +1,22 @@
 package analysis;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javaparser.GitJavaFile;
-import javaparser.ParseDirectory;
-import javaparser.ParseRemoteGitRepo;
+import java.util.Map.Entry;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 
+import parser.ExtractJavaFiles;
+import parser.GitJavaFile;
+import parser.ParseDirectory;
+import parser.ParseRemoteGitRepo;
+import softwaremetrics.ClassCohesion;
+import softwaremetrics.LackOfCohesionOfMethodsFive;
 import softwaremetrics.LinesOfCode;
+import cohesionhelperclasses.InnerClassOfFile;
 
 import com.github.javaparser.ast.CompilationUnit;
 
@@ -34,13 +36,24 @@ public class AnalysisRunner {
 		}
 	}
 	
-	private static void analyseLocalDirectory(File localFile) {
+	private static void analyseLocalDirectory(File localFile) throws IOException {
+		ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(localFile);
+		ArrayList<File> localJavaFiles = extractJavaFiles.returnJavaFiles();
+		
+		for (File f: localJavaFiles) {
+			System.out.println("java file: " + f.getAbsolutePath());
+		}
 		List<CompilationUnit> cuList = ParseDirectory.parse(localFile);
 		
 		for (CompilationUnit cu : cuList) {
 			int linesOfCode = LinesOfCode.getLinesOfCode(cu);
 			
-			System.out.println(cu.getParentNode().toString()+ ": " + linesOfCode + " Lines of code.");
+			//System.out.println(cu.getParentNode().toString()+ ": " + linesOfCode + " Lines of code.");
+		}
+		
+		for (File f : localJavaFiles) {
+			ArrayList<Entry<InnerClassOfFile, Double>> lcom5Result = LackOfCohesionOfMethodsFive.run(f);
+			ArrayList<Entry<InnerClassOfFile, Double>> classCohesionResult = ClassCohesion.run(f);
 		}
 	}
 	
@@ -48,40 +61,12 @@ public class AnalysisRunner {
 		ParseRemoteGitRepo remoteGitRepo = new ParseRemoteGitRepo(cloneRepo, repoLink);
 		ArrayList<GitJavaFile> filesWithCommits = remoteGitRepo.getFilesWithCommits();
 		
-		GitJavaFile gjf = filesWithCommits.get(0);
-		File test = gjf.getRepoFile();
-		System.out.println("Test" + test.getName());
-		for (File f : gjf.getAllFileVersions()) {
-			System.out.println(f.getAbsolutePath() + "££££££££££££");
-			System.out.println(createFileString(f.getAbsolutePath()));
+		for (GitJavaFile gitFile : filesWithCommits) {
+			for (File f : gitFile.getAllFileVersions()) {
+				ArrayList<Entry<InnerClassOfFile, Double>> lcom5Result = LackOfCohesionOfMethodsFive.run(f);
+				ArrayList<Entry<InnerClassOfFile, Double>> classCohesionResult = ClassCohesion.run(f);
+			}
 		}
-		//ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(cloneRepo);
-		
-		//String repoJavaFilesStrings[] = extractJavaFiles.returnJavaClassesStrings();
-		//ArrayList<File> repoJavaFiles = extractJavaFiles.returnJavaFiles();
-		
-		//for (int i = 0; i < repoJavaFiles.length; i++) {
-			//if (repoJavaFiles[i] != null) {
-				//File oldVersions[] = remoteGitRepo.returnAllVersions(repoJavaFiles[i]);
-			//}
-		//}
 	}
-	public static String createFileString(String filePath) throws IOException {
-		
-		StringBuilder fileAsString = new StringBuilder(1000);
-		BufferedReader r = new BufferedReader(new FileReader(filePath));
-
-		char[] chars = new char[2000];
-		String fileSegment = null;
-		int charsToRead = 0;
-		
-		while ((charsToRead = r.read(chars)) != -1) {
-			fileSegment = new String(chars, 0, charsToRead);
-			fileAsString.append(fileSegment);
-		}
-
-		r.close();
-
-		return  fileAsString.toString();	
-	}
+	
 }
