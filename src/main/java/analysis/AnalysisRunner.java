@@ -13,6 +13,7 @@ import parser.ExtractJavaFiles;
 import parser.GitJavaFile;
 import parser.ParseDirectory;
 import parser.ParseRemoteGitRepo;
+import parser.RepoAllVersions;
 import softwaremetrics.ClassCohesion;
 import softwaremetrics.LackOfCohesionOfMethodsFive;
 import softwaremetrics.LinesOfCode;
@@ -32,7 +33,7 @@ public class AnalysisRunner {
 			
 		}
 		if (userInput.remoteGitRepo) {
-			analyseRemoteGitRepo(userInput.rootFile, userInput.repoLink);
+			analyseRemoteGitRepo(userInput.rootFile, userInput.repoLink, userInput.directoriesPath);
 		}
 	}
 	
@@ -57,9 +58,10 @@ public class AnalysisRunner {
 		}
 	}
 	
-	private static void analyseRemoteGitRepo(File cloneRepo, String repoLink) throws IOException, InvalidRemoteException, GitAPIException {
-		ParseRemoteGitRepo remoteGitRepo = new ParseRemoteGitRepo(cloneRepo, repoLink);
+	private static void analyseRemoteGitRepo(File cloneRepo, String repoLink, String directoriesPath) throws IOException, InvalidRemoteException, GitAPIException {
+		ParseRemoteGitRepo remoteGitRepo = new ParseRemoteGitRepo(cloneRepo, repoLink, directoriesPath);
 		ArrayList<GitJavaFile> filesWithCommits = remoteGitRepo.getFilesWithCommits();
+		ArrayList<RepoAllVersions> repoAllVersions = remoteGitRepo.getRepoAllVersions();
 		
 		for (GitJavaFile gitFile : filesWithCommits) {
 			for (File f : gitFile.getAllFileVersions()) {

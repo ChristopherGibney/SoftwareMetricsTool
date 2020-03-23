@@ -18,7 +18,6 @@ public class ExtractClassAttributesAccessedByMethod {
 			}
 			else if (method.toString().contains(classVar.toString())) {
 				classAttributesAccessed.add(classVar);
-				System.out.println("Variable: " + classVar.toString());
 			}
 		}
 		return classAttributesAccessed;

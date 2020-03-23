@@ -27,6 +27,9 @@ public class InnerClassOfFile {
 	public void addMethod(MethodDeclaration methodDeclaration) {
 		classMethods.add(methodDeclaration);
 	}
+	public ClassOrInterfaceDeclaration getClassOrInterfaceDeclaration() {
+		return classOrInterface;
+	}
 	public String getClassName() {
 		return className;
 	}

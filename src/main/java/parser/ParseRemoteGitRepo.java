@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.*;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -29,8 +31,9 @@ import com.google.common.io.Files;
 public class ParseRemoteGitRepo {
 	
 	private ArrayList<GitJavaFile> filesWithCommits = new ArrayList<GitJavaFile>();
+	private ArrayList<RepoAllVersions> repoAllVersions = new ArrayList<RepoAllVersions>();
 	
-	public ParseRemoteGitRepo(File repoFile, String repoLink) throws InvalidRemoteException, GitAPIException, IOException {
+	public ParseRemoteGitRepo(File repoFile, String repoLink, String directoriesPath) throws InvalidRemoteException, GitAPIException, IOException {
 	
 		Git git = Git.cloneRepository()
 				.setURI(repoLink)
@@ -44,7 +47,7 @@ public class ParseRemoteGitRepo {
 		ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(repoFile);
 		ArrayList<File> repoJavaFiles = extractJavaFiles.returnJavaFiles();
 		
-		File dirForCopiedFiles = new File("C://Users//Chris//Desktop//TestRepo_1_files");
+		File dirForCopiedFiles = new File(directoriesPath + "//SoftwareMetricsToolFileVersions");
 		dirForCopiedFiles.mkdir();
 		
 		for (File f : repoJavaFiles) {
@@ -65,7 +68,7 @@ public class ParseRemoteGitRepo {
 				Repository currentRepo = git.checkout().setName(c.getName()).getRepository();
 				
 				File checkedOutFile = new File(currentRepo.getWorkTree(), filePath);
-				String newFilePath = "C://Users//Chris//Desktop//TestRepo_1_files//"
+				String newFilePath = directoriesPath + "//SoftwareMetricsToolFileVersions//"
 						+ f.getName().substring(0, f.getName().indexOf("."))
 											+ String.valueOf(fileCounter) + ".java";
 				fileCounter++;
@@ -77,18 +80,28 @@ public class ParseRemoteGitRepo {
 			}
 		}
 		
-		//for (Ref branch : allBranches) {
-			//Iterable<RevCommit> commits = git.log().all().call();
+		for (Ref branch : allBranches) {
+			int repoCounter = 0;
+			File dirForCopiedRepos = new File(directoriesPath + "//SoftwareMetricsToolRepoVersions");
+			dirForCopiedRepos.mkdir();
+			Iterable<RevCommit> repoAllCommits = git.log().add(git.getRepository().resolve(branch.getName())).call();
+			RepoAllVersions currentBranchAllVersions = new RepoAllVersions(git.getRepository(), branch, repoAllCommits);
 			
-			//for (RevCommit commit : commits) {
-				//RevTree commitTreeId = commit.getTree();
-				
-				//try (TreeWalk treeWalk = new TreeWalk(commitTreeId)) {
-					//treeWalk.reset
-				//}
-			//}
-		//}
-		//"https://github.com/ChristopherGibney/SoftwareMetricsTool"
+			for (Iterator i = repoAllCommits.iterator(); i.hasNext(); ) {
+				RevCommit commit = (RevCommit) i.next();
+				git.checkout().setName(commit.getName()).call();
+				String branchArrayName[] = branch.getName().split("/");
+				String branchSimpleName = branchArrayName[branchArrayName.length-1];
+				String repoName = directoriesPath + "//SoftwareMetricsToolRepoVersions//Repo" + branchSimpleName + String.valueOf(repoCounter);
+				File oldRepoVersion = new File(repoName);
+				oldRepoVersion.mkdir();
+				FileUtils.copyDirectory(repoFile, oldRepoVersion);
+				currentBranchAllVersions.addVersionOfRepo(oldRepoVersion);
+				repoCounter++;
+			}
+			repoAllVersions.add(currentBranchAllVersions);
+		}
+		
 	}
 	
 	//returns commits for a file as an arraylist, order is most recent->least recent
@@ -114,5 +127,8 @@ public class ParseRemoteGitRepo {
 	
 	public ArrayList<GitJavaFile> getFilesWithCommits() {
 		return filesWithCommits;
+	}
+	public ArrayList<RepoAllVersions> getRepoAllVersions() {
+		return repoAllVersions;
 	}
 }

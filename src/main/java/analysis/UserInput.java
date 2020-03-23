@@ -11,7 +11,7 @@ import org.eclipse.jgit.api.errors.InvalidRemoteException;
 public class UserInput {
 	
 	public boolean localDir = false, remoteGitRepo = false, localGitRepo = false;
-	public String repoLink = "";
+	public String repoLink = "", directoriesPath;
 	public File rootFile;
 
 	public UserInput() throws IOException, InvalidRemoteException, GitAPIException {
@@ -39,10 +39,11 @@ public class UserInput {
 			System.out.println("Enter link to remote GitHub repo: ");
 			repoLink = userInput.nextLine();
 			//repoLink = "https://github.com/ChristopherGibney/SoftwareMetricsTool";
-			System.out.println("Enter path to empty folder Remote repository can "
-								+ "be cloned into in the form \n"
-								+ "C:\\\\Users\\\\Chris\\\\Desktop\\\\TestRepo: ");
-			String cloneRepoLocation = userInput.nextLine();
+			System.out.println("Enter path to folder where necessary temp directories can be created "
+								+ "for example: \n"
+								+ "C:\\\\Users\\\\Chris\\\\Desktop: ");
+			directoriesPath = userInput.nextLine();
+			String cloneRepoLocation = directoriesPath + "\\SoftwareMetricsToolRepo";
 			//String cloneRepoLocation = "C:\\Users\\Chris\\Desktop\\TestRepo_1";
 			rootFile = new File(cloneRepoLocation);
 		}
