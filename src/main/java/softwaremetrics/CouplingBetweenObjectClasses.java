@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import cohesionhelperclasses.ExtractClassesFromFile;
-import cohesionhelperclasses.InnerClassOfFile;
+import softwaremetricshelperclasses.ExtractClassesFromFile;
+import softwaremetricshelperclasses.InnerClassOfFile;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;

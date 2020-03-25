@@ -17,7 +17,7 @@ import parser.RepoAllVersions;
 import softwaremetrics.ClassCohesion;
 import softwaremetrics.LackOfCohesionOfMethodsFive;
 import softwaremetrics.LinesOfCode;
-import cohesionhelperclasses.InnerClassOfFile;
+import softwaremetricshelperclasses.InnerClassOfFile;
 
 import com.github.javaparser.ast.CompilationUnit;
 
@@ -63,10 +63,17 @@ public class AnalysisRunner {
 		ArrayList<GitJavaFile> filesWithCommits = remoteGitRepo.getFilesWithCommits();
 		ArrayList<RepoAllVersions> repoAllVersions = remoteGitRepo.getRepoAllVersions();
 		
-		for (GitJavaFile gitFile : filesWithCommits) {
-			for (File f : gitFile.getAllFileVersions()) {
-				ArrayList<Entry<InnerClassOfFile, Double>> lcom5Result = LackOfCohesionOfMethodsFive.run(f);
-				ArrayList<Entry<InnerClassOfFile, Double>> classCohesionResult = ClassCohesion.run(f);
+		//for each repo in a branch
+		for (RepoAllVersions repo : repoAllVersions) {
+			//for each version of the repo in the branch
+			for (File repoDirectory : repo.getAllRepoVersions()) {
+				ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(repoDirectory);
+				ArrayList<File> currentRepoJavaFiles = extractJavaFiles.returnJavaFiles();
+				repo.addJavaFiles(currentRepoJavaFiles);
+				for (File f : currentRepoJavaFiles) {
+					ArrayList<Entry<InnerClassOfFile, Double>> lcom5Result = LackOfCohesionOfMethodsFive.run(f);
+					ArrayList<Entry<InnerClassOfFile, Double>> classCohesionResult = ClassCohesion.run(f);
+				}
 			}
 		}
 	}

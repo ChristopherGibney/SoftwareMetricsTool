@@ -1,4 +1,4 @@
-package cohesionhelperclasses;
+package softwaremetricshelperclasses;
 
 import java.util.ArrayList;
 import java.util.Objects;

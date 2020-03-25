@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.AbstractMap.SimpleEntry;
 
-import cohesionhelperclasses.ExtractClassesFromFile;
-import cohesionhelperclasses.ExtractDuplicateClassAttributesOfMethod;
-import cohesionhelperclasses.InnerClassOfFile;
-import cohesionhelperclasses.ExtractClassAttributesAccessedByMethod;
+import softwaremetricshelperclasses.ExtractClassAttributesAccessedByMethod;
+import softwaremetricshelperclasses.ExtractClassesFromFile;
+import softwaremetricshelperclasses.ExtractDuplicateClassAttributesOfMethod;
+import softwaremetricshelperclasses.InnerClassOfFile;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
