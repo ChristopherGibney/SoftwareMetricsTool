@@ -6,17 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 
 import parser.ExtractJavaFiles;
 import parser.GitJavaFile;
 import parser.ParseDirectory;
-import parser.ParseRemoteGitRepo;
+import parser.ParseGitRepo;
 import parser.RepoAllVersions;
 import softwaremetrics.ClassCohesion;
 import softwaremetrics.LackOfCohesionOfMethodsFive;
 import softwaremetrics.LinesOfCode;
+import softwaremetrics.SensitiveClassCohesion;
 import softwaremetricshelperclasses.InnerClassOfFile;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -30,10 +32,16 @@ public class AnalysisRunner {
 			analyseLocalDirectory(userInput.rootFile);
 		}
 		if (userInput.localGitRepo) {
-			
+			Git git = Git.open(userInput.rootFile);
+			analyseGitRepo(userInput.rootFile, git, userInput.directoriesPath);
 		}
 		if (userInput.remoteGitRepo) {
-			analyseRemoteGitRepo(userInput.rootFile, userInput.repoLink, userInput.directoriesPath);
+			Git git = Git.cloneRepository()
+					.setURI(userInput.repoLink)
+					.setDirectory(userInput.rootFile)
+					.setCloneAllBranches(true)
+					.call();
+			analyseGitRepo(userInput.rootFile, git, userInput.directoriesPath);
 		}
 	}
 	
@@ -55,11 +63,12 @@ public class AnalysisRunner {
 		for (File f : localJavaFiles) {
 			ArrayList<Entry<InnerClassOfFile, Double>> lcom5Result = LackOfCohesionOfMethodsFive.run(f);
 			ArrayList<Entry<InnerClassOfFile, Double>> classCohesionResult = ClassCohesion.run(f);
+			ArrayList<Entry<InnerClassOfFile, Double>> sensitiveClassCohesionResult = SensitiveClassCohesion.run(f);
 		}
 	}
 	
-	private static void analyseRemoteGitRepo(File cloneRepo, String repoLink, String directoriesPath) throws IOException, InvalidRemoteException, GitAPIException {
-		ParseRemoteGitRepo remoteGitRepo = new ParseRemoteGitRepo(cloneRepo, repoLink, directoriesPath);
+	private static void analyseGitRepo(File repoFile, Git git, String directoriesPath) throws IOException, InvalidRemoteException, GitAPIException {
+		ParseGitRepo remoteGitRepo = new ParseGitRepo(repoFile, git, directoriesPath);
 		ArrayList<GitJavaFile> filesWithCommits = remoteGitRepo.getFilesWithCommits();
 		ArrayList<RepoAllVersions> repoAllVersions = remoteGitRepo.getRepoAllVersions();
 		
@@ -73,6 +82,7 @@ public class AnalysisRunner {
 				for (File f : currentRepoJavaFiles) {
 					ArrayList<Entry<InnerClassOfFile, Double>> lcom5Result = LackOfCohesionOfMethodsFive.run(f);
 					ArrayList<Entry<InnerClassOfFile, Double>> classCohesionResult = ClassCohesion.run(f);
+					ArrayList<Entry<InnerClassOfFile, Double>> sensitiveClassCohesionResult = SensitiveClassCohesion.run(f);
 				}
 			}
 		}

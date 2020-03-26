@@ -28,20 +28,12 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 import com.google.common.io.Files;
 
-public class ParseRemoteGitRepo {
+public class ParseGitRepo {
 	
 	private ArrayList<GitJavaFile> filesWithCommits = new ArrayList<GitJavaFile>();
 	private ArrayList<RepoAllVersions> repoAllVersions = new ArrayList<RepoAllVersions>();
 	
-	public ParseRemoteGitRepo(File repoFile, String repoLink, String directoriesPath) throws InvalidRemoteException, GitAPIException, IOException {
-	
-		Git git = Git.cloneRepository()
-				.setURI(repoLink)
-				.setDirectory(repoFile)
-				.setCloneAllBranches(true)
-				.call();
-		Repository repo = new FileRepository(repoFile);
-		RevWalk revWalk = new RevWalk(repo);
+	public ParseGitRepo(File repoFile, Git git, String directoriesPath) throws InvalidRemoteException, GitAPIException, IOException {
 		List<Ref> allBranches = git.branchList().call();
 		
 		ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(repoFile);
@@ -87,8 +79,8 @@ public class ParseRemoteGitRepo {
 			Iterable<RevCommit> repoAllCommits = git.log().add(git.getRepository().resolve(branch.getName())).call();
 			RepoAllVersions currentBranchAllVersions = new RepoAllVersions(git.getRepository(), branch, repoAllCommits);
 			
-			for (Iterator i = repoAllCommits.iterator(); i.hasNext(); ) {
-				RevCommit commit = (RevCommit) i.next();
+			for (Iterator<RevCommit> i = repoAllCommits.iterator(); i.hasNext(); ) {
+				RevCommit commit = i.next();
 				git.checkout().setName(commit.getName()).call();
 				String branchArrayName[] = branch.getName().split("/");
 				String branchSimpleName = branchArrayName[branchArrayName.length-1];
