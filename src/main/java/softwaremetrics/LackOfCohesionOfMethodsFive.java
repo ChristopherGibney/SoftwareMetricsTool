@@ -37,8 +37,7 @@ public class LackOfCohesionOfMethodsFive {
 				sumAttributesAccessed += classAttributesAccessed.size();
 			}
 			
-			
-			double lcomClassResult = (numMethods - (sumAttributesAccessed/numAttributes)) / (numMethods - 1.0);
+			double lcomClassResult = (numMethods - (sumAttributesAccessed/numAttributes)) / (numMethods - 1.0); 
 			Entry<InnerClassOfFile, Double> lcomClass = new SimpleEntry<>(innerClass, lcomClassResult);
 			lcomOfAllInnerClasses.add(lcomClass);
 		}

@@ -37,7 +37,7 @@ public class ClassCohesion {
 					sumMethodSimilarities += (methodPairIntersection / methodPairUnion);
 				}
 			}
-			double classCohesionResult = (2 * (sumMethodSimilarities)) / (numMethods * (numMethods - 1));
+			double classCohesionResult = (2 * (sumMethodSimilarities)) / (numMethods * (numMethods - 1)); 
 			Entry<InnerClassOfFile, Double> classCohesion = new SimpleEntry<>(innerClass, classCohesionResult);
 			classCohesionOfAllInnerClasses.add(classCohesion);
 		}

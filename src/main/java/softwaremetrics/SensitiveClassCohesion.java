@@ -6,16 +6,13 @@ import java.util.ArrayList;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 
-import softwaremetricshelperclasses.ExtractClassAttributesAccessedByMethod;
 import softwaremetricshelperclasses.ExtractClassesFromFile;
-import softwaremetricshelperclasses.ExtractDuplicateClassAttributesOfMethod;
 import softwaremetricshelperclasses.InnerClassOfFile;
 import softwaremetricshelperclasses.MethodPairIntersectionAndUnion;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.VariableDeclarator;
 
 public class SensitiveClassCohesion {
 	

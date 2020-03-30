@@ -31,13 +31,11 @@ import com.google.common.io.Files;
 public class ParseGitRepo {
 	
 	private ArrayList<GitJavaFile> filesWithCommits = new ArrayList<GitJavaFile>();
-	private ArrayList<RepoAllVersions> repoAllVersions = new ArrayList<RepoAllVersions>();
+	private ArrayList<RepoAllVersionsOnBranch> repoAllVersionsAllBranches = new ArrayList<RepoAllVersionsOnBranch>();
 	
 	public ParseGitRepo(File repoFile, Git git, String directoriesPath) throws InvalidRemoteException, GitAPIException, IOException {
-		List<Ref> allBranches = git.branchList().call();
-		
-		ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(repoFile);
-		ArrayList<File> repoJavaFiles = extractJavaFiles.returnJavaFiles();
+		/*ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(repoFile);
+		ArrayList<File> repoJavaFiles = extractJavaFiles.getJavaFiles();
 		
 		File dirForCopiedFiles = new File(directoriesPath + "//SoftwareMetricsToolFileVersions");
 		dirForCopiedFiles.mkdir();
@@ -52,7 +50,7 @@ public class ParseGitRepo {
 			int fileCounter = 0;
 			String filePath = getRepoRelativePath(f, repoFile.getName());
 			ArrayList<RevCommit> commits = fwc.getCommits();
-			System.out.println("**************** " + f.getAbsolutePath().replace("\\", "/"));
+			//System.out.println("**************** " + f.getAbsolutePath().replace("\\", "/"));
 			
 			for (RevCommit c : commits) {
 				//ExtractJavaFiles ejf = new ExtractJavaFiles(repo.getWorkTree());
@@ -70,28 +68,26 @@ public class ParseGitRepo {
 				fwc.addVersionOfFile(destination);
 				//System.out.println(f.getAbsolutePath() + "----" + c.getFullMessage() + c.getCommitTime());
 			}
-		}
+		}*/
 		
-		for (Ref branch : allBranches) {
+		for (Ref branch : git.branchList().call()) {
 			int repoCounter = 0;
 			File dirForCopiedRepos = new File(directoriesPath + "//SoftwareMetricsToolRepoVersions");
 			dirForCopiedRepos.mkdir();
 			Iterable<RevCommit> repoAllCommits = git.log().add(git.getRepository().resolve(branch.getName())).call();
-			RepoAllVersions currentBranchAllVersions = new RepoAllVersions(git.getRepository(), branch, repoAllCommits);
+			RepoAllVersionsOnBranch currentBranchAllVersions = new RepoAllVersionsOnBranch(git.getRepository(), branch, repoAllCommits);
 			
 			for (Iterator<RevCommit> i = repoAllCommits.iterator(); i.hasNext(); ) {
 				RevCommit commit = i.next();
 				git.checkout().setName(commit.getName()).call();
-				String branchArrayName[] = branch.getName().split("/");
-				String branchSimpleName = branchArrayName[branchArrayName.length-1];
-				String repoName = directoriesPath + "//SoftwareMetricsToolRepoVersions//Repo" + branchSimpleName + String.valueOf(repoCounter);
+				String repoName = directoriesPath + "//SoftwareMetricsToolRepoVersions//Repo" + currentBranchAllVersions.getBranchSimpleName() + String.valueOf(repoCounter);
 				File oldRepoVersion = new File(repoName);
 				oldRepoVersion.mkdir();
 				FileUtils.copyDirectory(repoFile, oldRepoVersion);
 				currentBranchAllVersions.addVersionOfRepo(oldRepoVersion);
 				repoCounter++;
 			}
-			repoAllVersions.add(currentBranchAllVersions);
+			repoAllVersionsAllBranches.add(currentBranchAllVersions);
 		}
 		
 	}
@@ -120,7 +116,7 @@ public class ParseGitRepo {
 	public ArrayList<GitJavaFile> getFilesWithCommits() {
 		return filesWithCommits;
 	}
-	public ArrayList<RepoAllVersions> getRepoAllVersions() {
-		return repoAllVersions;
+	public ArrayList<RepoAllVersionsOnBranch> getRepoAllVersionsAllBranches() {
+		return repoAllVersionsAllBranches;
 	}
 }
