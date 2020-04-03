@@ -10,16 +10,13 @@ import softwaremetricshelperclasses.ExtractClassesFromFile;
 import softwaremetricshelperclasses.ExtractDuplicateClassAttributesOfMethod;
 import softwaremetricshelperclasses.InnerClassOfFile;
 
-import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 
 public class LackOfCohesionOfMethodsFive {
 	
 	public static ArrayList<Entry<InnerClassOfFile, Double>> run(File f) throws FileNotFoundException {
-		CompilationUnit cu = StaticJavaParser.parse(f);
-		ArrayList<InnerClassOfFile> classes = ExtractClassesFromFile.extract(cu);
+		ArrayList<InnerClassOfFile> classes = ExtractClassesFromFile.extract(f);
 		ArrayList<Entry<InnerClassOfFile, Double>> lcomOfAllInnerClasses = new ArrayList<>();
 		
 		for (InnerClassOfFile innerClass : classes) {

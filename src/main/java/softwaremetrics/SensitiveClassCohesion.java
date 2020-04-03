@@ -10,15 +10,12 @@ import softwaremetricshelperclasses.ExtractClassesFromFile;
 import softwaremetricshelperclasses.InnerClassOfFile;
 import softwaremetricshelperclasses.MethodPairIntersectionAndUnion;
 
-import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
 public class SensitiveClassCohesion {
 	
 	public static ArrayList<Entry<InnerClassOfFile, Double>> run(File f) throws FileNotFoundException {
-		CompilationUnit cu = StaticJavaParser.parse(f);
-		ArrayList<InnerClassOfFile> classes = ExtractClassesFromFile.extract(cu);
+		ArrayList<InnerClassOfFile> classes = ExtractClassesFromFile.extract(f);
 		ArrayList<Entry<InnerClassOfFile, Double>> sensitiveClassCohesionOfAllInnerClasses = new ArrayList<>();
 		
 		for (InnerClassOfFile innerClass : classes) {

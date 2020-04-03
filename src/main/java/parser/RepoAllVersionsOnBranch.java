@@ -10,6 +10,8 @@ import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 
+import results.ClassResultsMap;
+
 public class RepoAllVersionsOnBranch {
 	private Repository repo;
 	private Ref branch;
@@ -18,6 +20,7 @@ public class RepoAllVersionsOnBranch {
 	private Iterable<RevCommit> commits = new ArrayList<RevCommit>();
 	private ArrayList<File> repoAllVersions = new ArrayList<File>();
 	private ArrayList<ArrayList<File>> javaFiles = new ArrayList<ArrayList<File>>();
+	private ClassResultsMap classResultsMap = new ClassResultsMap();
 	private Map<String, Map<String, List<Double>>> allClassResults = new HashMap<>();
 	
 	public RepoAllVersionsOnBranch(Repository r, Ref branch, Iterable<RevCommit> commits) {
@@ -34,26 +37,10 @@ public class RepoAllVersionsOnBranch {
 		javaFiles.add(files);
 	}
 	public void addResult(String fileClassName, String metric, Double result) {
-		if (allClassResults.containsKey(fileClassName) && !result.isNaN()) {
-			if (allClassResults.get(fileClassName).containsKey(metric)) {
-				allClassResults.get(fileClassName).get(metric).add(result);
-			}
-			else {
-				List<Double> results = new ArrayList<>();
-				results.add(result);
-				allClassResults.get(fileClassName).put(metric, results);
-			}
-		}
-		else if (!result.isNaN()) {
-			List<Double> results = new ArrayList<>();
-			results.add(result);
-			Map<String, List<Double>> metricResults = new HashMap<>();
-			metricResults.put(metric, results);
-			allClassResults.put(fileClassName, metricResults);
-		}	
+		classResultsMap.addResult(fileClassName, metric, result);
 	}
 	public Map<String, Map<String, List<Double>>> getResults() {
-		return allClassResults;
+		return classResultsMap.getResults();
 	}
 	public ArrayList<File> getAllRepoVersionsOnBranch() {
 		return this.repoAllVersions;

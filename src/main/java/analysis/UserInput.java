@@ -32,6 +32,9 @@ public class UserInput {
 					+ "C://Users//Chris//Desktop//LocalFile: ");
 			String localPath = userInput.nextLine();
 			rootFile = new File(localPath);
+			System.out.println("Enter path to folder where results file can be created "
+					+ "\nfor example: C:\\\\Users\\\\Chris\\\\Desktop will create SoftwareMetricsToolResults.txt on Desktop.");
+			directoriesPath = userInput.nextLine();
 		}
 		else if (fileType == 2) {
 			localGitRepo = true;

@@ -6,23 +6,16 @@ import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.AbstractMap.SimpleEntry;
 
-import softwaremetricshelperclasses.ExtractClassAttributesAccessedByMethod;
 import softwaremetricshelperclasses.ExtractClassesFromFile;
-import softwaremetricshelperclasses.ExtractDuplicateClassAttributesOfMethod;
 import softwaremetricshelperclasses.InnerClassOfFile;
 import softwaremetricshelperclasses.MethodPairIntersectionAndUnion;
 
-import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.VariableDeclarator;
 
 public class ClassCohesion {
 
 	public static ArrayList<Entry<InnerClassOfFile, Double>> run(File f) throws FileNotFoundException {
-		
-		CompilationUnit cu = StaticJavaParser.parse(f);
-		ArrayList<InnerClassOfFile> classes = ExtractClassesFromFile.extract(cu);
+		ArrayList<InnerClassOfFile> classes = ExtractClassesFromFile.extract(f);
 		ArrayList<Entry<InnerClassOfFile, Double>> classCohesionOfAllInnerClasses = new ArrayList<>();
 		
 		for (InnerClassOfFile innerClass : classes) {

@@ -8,6 +8,7 @@ public class ExtractJavaFiles {
 	private ArrayList<String> fileNames = new ArrayList<String>();
 	private ArrayList<String> fileAbsolutePath = new ArrayList<String>();
 	private ArrayList<File> javaFiles = new ArrayList<File>();
+	private ArrayList<File> parentFiles = new ArrayList<File>();
 	
 	public ExtractJavaFiles(File root) throws IOException {
 		File[] files = root.listFiles();
@@ -21,6 +22,10 @@ public class ExtractJavaFiles {
 			if (fileName.endsWith(".java")) {
 				String shortenedName = (f.getName().substring(0, f.getName().indexOf(".")));
 				javaFiles.add(f);
+				if (!parentFiles.contains(f.getParentFile())) {
+					System.out.println(f.getParentFile().getName());
+					parentFiles.add(f.getParentFile());
+				}
 				fileNames.add(shortenedName);
 				fileAbsolutePath.add(f.getAbsolutePath());
 			}
@@ -37,5 +42,8 @@ public class ExtractJavaFiles {
 	}
 	public ArrayList<File> getJavaFiles() {
 		return javaFiles;
+	}
+	public ArrayList<File> getParentFiles() {
+		return parentFiles;
 	}
 }
