@@ -23,8 +23,11 @@ public class ExtractJavaFiles {
 				String shortenedName = (f.getName().substring(0, f.getName().indexOf(".")));
 				javaFiles.add(f);
 				if (!parentFiles.contains(f.getParentFile())) {
-					System.out.println(f.getParentFile().getName());
+					//System.out.println(f.getParentFile().getName());
 					parentFiles.add(f.getParentFile());
+				}
+				if (!parentFiles.contains(f.getParentFile().getParentFile())) {
+					parentFiles.add(f.getParentFile().getParentFile());
 				}
 				fileNames.add(shortenedName);
 				fileAbsolutePath.add(f.getAbsolutePath());

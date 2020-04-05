@@ -12,13 +12,20 @@ public class InnerClassOfFile {
 	private ArrayList<FieldDeclaration> classFields = new ArrayList<>();
 	private ArrayList<VariableDeclarator> classVariables = new ArrayList<>();
 	private ArrayList<MethodDeclaration> classMethods = new ArrayList<>();
-	private String className = "", fileName = "", branchName = "";
-	private ArrayList<InnerClassOfFile> coupledObjectClasses = new ArrayList<>();
-	private int totalCoupledObjectClasses;
+	private String className = "", fileName = "", branchName = "", packageName = "";
+	private ArrayList<InnerClassOfFile> coupledObjectClasses = new ArrayList<>(), dependantClasses = new ArrayList<>();
 	
 	public InnerClassOfFile(ClassOrInterfaceDeclaration c) {
 		classOrInterface = c;
 		className = classOrInterface.getName().asString();
+	}
+	public boolean containsVariable(String variableString) {
+		for (VariableDeclarator variable : classVariables) {
+			if (variable.getName().toString().equals(variableString)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	public void addField(FieldDeclaration fieldDeclaration) {
 		classFields.add(fieldDeclaration);
@@ -32,26 +39,20 @@ public class InnerClassOfFile {
 	public void addCoupledObjectClasses(ArrayList<InnerClassOfFile> coupledObjectClassList) {
 		coupledObjectClasses.addAll(coupledObjectClassList);
 	}
+	public void addDependantClass(InnerClassOfFile dependantClass) {
+		dependantClasses.add(dependantClass);
+	}
 	public void addCoupledObjectClass(InnerClassOfFile coupledClass) {
 		coupledObjectClasses.add(coupledClass);
 	}
 	public void addFileName(String nameOfFile) {
 		fileName = nameOfFile;
 	}
+	public void addPackageName(String nameOfPackage) {
+		packageName = nameOfPackage;
+	}
 	public void addBranchName (String nameOfBranch) {
 		branchName = nameOfBranch;
-	}
-	public void addTotalNumberCoupledClasses(int totalCoupledClasses) {
-		totalCoupledObjectClasses = totalCoupledClasses;
-		coupledObjectClasses.clear();
-	}
- 	public boolean containsVariable(String variableString) {
-		for (VariableDeclarator variable : classVariables) {
-			if (variable.getName().toString().equals(variableString)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	public ClassOrInterfaceDeclaration getClassOrInterfaceDeclaration() {
 		return classOrInterface;
@@ -59,14 +60,17 @@ public class InnerClassOfFile {
 	public ArrayList<InnerClassOfFile> getCoupledObjectClasses() {
 		return coupledObjectClasses;
 	}
-	public int getTotalCoupledObjectClasses() {
-		return totalCoupledObjectClasses;
+	public ArrayList<InnerClassOfFile> getDependantClasses() {
+		return dependantClasses;
 	}
 	public String getClassName() {
 		return className;
 	}
 	public String getFileName() {
 		return fileName;
+	}
+	public String getPackageName() {
+		return packageName;
 	}
 	public String getBranchName() {
 		return branchName;
