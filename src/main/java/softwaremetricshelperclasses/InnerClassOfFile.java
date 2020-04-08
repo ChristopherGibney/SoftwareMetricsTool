@@ -36,9 +36,6 @@ public class InnerClassOfFile {
 	public void addMethod(MethodDeclaration methodDeclaration) {
 		classMethods.add(methodDeclaration);
 	}
-	public void addCoupledObjectClasses(ArrayList<InnerClassOfFile> coupledObjectClassList) {
-		coupledObjectClasses.addAll(coupledObjectClassList);
-	}
 	public void addDependantClass(InnerClassOfFile dependantClass) {
 		dependantClasses.add(dependantClass);
 	}
