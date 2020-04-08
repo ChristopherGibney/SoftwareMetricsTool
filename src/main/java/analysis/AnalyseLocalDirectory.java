@@ -38,21 +38,6 @@ public class AnalyseLocalDirectory {
 				innerClass.addPackageName(packageName);
 			}
 			
-			ArrayList<Entry<InnerClassOfFile, Double>> lcom5Result = LackOfCohesionOfMethodsFive.run(f);
-			ArrayList<Entry<InnerClassOfFile, Double>> classCohesionResult = ClassCohesion.run(f);
-			ArrayList<Entry<InnerClassOfFile, Double>> sensitiveClassCohesionResult = SensitiveClassCohesion.run(f);
-			for (Entry<InnerClassOfFile, Double> lcom5 : lcom5Result) {
-				String fileClassName = packageName + fileName + lcom5.getKey().getClassName();
-				classResultsMap.addResult(fileClassName, "LCOM5", lcom5.getValue());
-			}
-			for (Entry<InnerClassOfFile, Double> classCohesion : classCohesionResult) {
-				String fileClassName = packageName + fileName + classCohesion.getKey().getClassName();
-				classResultsMap.addResult(fileClassName, "ClassCohesion", classCohesion.getValue());
-			}
-			for (Entry<InnerClassOfFile, Double> sensitiveClassCohesion : sensitiveClassCohesionResult) {
-				String fileClassName = packageName + fileName + sensitiveClassCohesion.getKey().getClassName();
-				classResultsMap.addResult(fileClassName, "SensitiveClassCohesion", sensitiveClassCohesion.getValue());
-			}
 		}
 		for (InnerClassOfFile currentClass : allClasses) {
 			ExtractClassesCoupledFromCurrentClass.extract(localDir, currentClass, allClasses, extractJavaFiles.getParentFiles());
@@ -64,9 +49,12 @@ public class AnalyseLocalDirectory {
 			classResultsMap.addResult(fileClassName, "CouplingBetweenObjectClasses", cboResult.getValue());
 		}
 		for (InnerClassOfFile currentClass : allClasses) {
-			double dataAbstractionCouplingResult = DataAbstractionCoupling.run(currentClass, allClasses, extractJavaFiles.getParentFiles());
 			String fileClassName = currentClass.getPackageName() + currentClass.getFileName() + currentClass.getClassName();
-			classResultsMap.addResult(fileClassName, "DataAbstractionCoupling", dataAbstractionCouplingResult);
+			
+			classResultsMap.addResult(fileClassName, "LCOM5", LackOfCohesionOfMethodsFive.run(currentClass));
+			classResultsMap.addResult(fileClassName, "ClassCohesion", ClassCohesion.run(currentClass));
+			classResultsMap.addResult(fileClassName, "SensitiveClassCohesion", SensitiveClassCohesion.run(currentClass));
+			classResultsMap.addResult(fileClassName, "DataAbstractionCoupling", DataAbstractionCoupling.run(currentClass, allClasses, extractJavaFiles.getParentFiles()));
 		}
 		
 		Map<String, Map<String, List<Double>>> classResults = classResultsMap.getResults();

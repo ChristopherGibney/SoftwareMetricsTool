@@ -15,31 +15,24 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 
 public class LackOfCohesionOfMethodsFive {
 	
-	public static ArrayList<Entry<InnerClassOfFile, Double>> run(File f) throws FileNotFoundException {
-		ArrayList<InnerClassOfFile> classes = ExtractClassesFromFile.extract(f);
-		ArrayList<Entry<InnerClassOfFile, Double>> lcomOfAllInnerClasses = new ArrayList<>();
-		
-		for (InnerClassOfFile innerClass : classes) {
-			double numMethods = innerClass.getClassMethods().size();
-			double numAttributes = innerClass.getClassVariables().size();
-			double sumAttributesAccessed = 0;
+	public static double run(InnerClassOfFile currentClass) throws FileNotFoundException {
+		double numMethods = currentClass.getClassMethods().size();
+		double numAttributes = currentClass.getClassVariables().size();
+		double sumAttributesAccessed = 0;
 			
-			for (MethodDeclaration method : innerClass.getClassMethods()) {
-				ArrayList<VariableDeclarator> duplicateMethodClassVars = 
-						ExtractDuplicateClassAttributesOfMethod.extract(method, innerClass);
+		for (MethodDeclaration method : currentClass.getClassMethods()) {
+			ArrayList<VariableDeclarator> duplicateMethodClassVars = 
+					ExtractDuplicateClassAttributesOfMethod.extract(method, currentClass);
 				
-				ArrayList<VariableDeclarator> classAttributesAccessed = 
-						ExtractClassAttributesAccessedByMethod.extract(duplicateMethodClassVars, method, innerClass);
+			ArrayList<VariableDeclarator> classAttributesAccessed = 
+					ExtractClassAttributesAccessedByMethod.extract(duplicateMethodClassVars, method, currentClass);
 				
-				sumAttributesAccessed += classAttributesAccessed.size();
-			}
-			
-			double lcomClassResult = (numMethods - (sumAttributesAccessed/numAttributes)) / (numMethods - 1.0); 
-			Entry<InnerClassOfFile, Double> lcomClass = new SimpleEntry<>(innerClass, lcomClassResult);
-			lcomOfAllInnerClasses.add(lcomClass);
+			sumAttributesAccessed += classAttributesAccessed.size();
 		}
+			
+		double lcomClassResult = (numMethods - (sumAttributesAccessed/numAttributes)) / (numMethods - 1.0); 
 		
-		return lcomOfAllInnerClasses;
+		return lcomClassResult;
 	}
 }
 

@@ -3,6 +3,9 @@ package analysis;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.jgit.api.Git;
@@ -36,6 +39,7 @@ public class AnalyseGitRepo {
 			for (File repoDirectory : repoOnBranch.getAllRepoVersionsOnBranch()) {
 				System.out.println(repoDirectory.getAbsolutePath());
 				ArrayList<InnerClassOfFile> allClasses = new ArrayList<>();
+				Map<String, ArrayList<InnerClassOfFile>> packages = new HashMap<>();
 				ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(repoDirectory);
 				//ArrayList<File> currentRepoJavaFiles = extractJavaFiles.getJavaFiles();
 				//repo.addJavaFiles(currentRepoJavaFiles);
@@ -44,30 +48,18 @@ public class AnalyseGitRepo {
 					String packageName = f.getParentFile().getName() + "/";
 					ArrayList<InnerClassOfFile> classes = ExtractClassesFromFile.extract(f);
 					allClasses.addAll(classes);
+					if (packages.containsKey(f.getParentFile().toString())) {
+						packages.get(f.getParentFile().toString()).addAll(classes);
+					}
+					else {
+						String currentPackageName = f.getParentFile().toString();
+						packages.put(currentPackageName, classes);
+					}
 					for (InnerClassOfFile innerClass : classes) {
 						innerClass.addFileName(fileName);
 						innerClass.addPackageName(packageName);
 						innerClass.addBranchName(branchName);
-					}
-					ArrayList<Entry<InnerClassOfFile, Double>> lcom5Result = LackOfCohesionOfMethodsFive.run(f);
-					ArrayList<Entry<InnerClassOfFile, Double>> classCohesionResult = ClassCohesion.run(f);
-					ArrayList<Entry<InnerClassOfFile, Double>> sensitiveClassCohesionResult = SensitiveClassCohesion.run(f);
-					
-					for (Entry<InnerClassOfFile, Double> lcom5 : lcom5Result) {
-						String fileClassName = branchName + packageName + fileName + lcom5.getKey().getClassName();
-						repoOnBranch.addResult(fileClassName, "LCOM5", lcom5.getValue());
-					}
-					for (Entry<InnerClassOfFile, Double> classCohesion : classCohesionResult) {
-						String fileClassName = branchName + packageName + fileName + classCohesion.getKey().getClassName();
-						repoOnBranch.addResult(fileClassName, "ClassCohesion", classCohesion.getValue());
-					}
-					for (Entry<InnerClassOfFile, Double> sensitiveClassCohesion : sensitiveClassCohesionResult) {
-						String fileClassName = branchName + packageName + fileName + sensitiveClassCohesion.getKey().getClassName();
-						repoOnBranch.addResult(fileClassName, "SensitiveClassCohesion", sensitiveClassCohesion.getValue());
-					}
-					lcom5Result.clear();
-					classCohesionResult.clear();
-					sensitiveClassCohesionResult.clear();
+					}	
 				}
 				for (InnerClassOfFile currentClass : allClasses) {
 					ExtractClassesCoupledFromCurrentClass.extract(repoDirectory, currentClass, allClasses, extractJavaFiles.getParentFiles());
@@ -79,9 +71,13 @@ public class AnalyseGitRepo {
 					repoOnBranch.addResult(fileClassName, "CouplingBetweenObjectClasses", cboResult.getValue());
 				}
 				for (InnerClassOfFile currentClass : allClasses) {
-					double dataAbstractionCouplingResult = DataAbstractionCoupling.run(currentClass, allClasses, extractJavaFiles.getParentFiles());
-					String fileClassName = branchName + currentClass.getPackageName() + currentClass.getFileName() + currentClass.getClassName();
-					repoOnBranch.addResult(fileClassName, "DataAbstractionCoupling", dataAbstractionCouplingResult);
+					String fileClassName = currentClass.getBranchName() + currentClass.getPackageName() + 
+							currentClass.getFileName() + currentClass.getClassName();
+					
+					repoOnBranch.addResult(fileClassName, "SensitiveClassCohesion", SensitiveClassCohesion.run(currentClass));
+					repoOnBranch.addResult(fileClassName, "LCOM5", LackOfCohesionOfMethodsFive.run(currentClass));
+					repoOnBranch.addResult(fileClassName, "ClassCohesion", ClassCohesion.run(currentClass));
+					repoOnBranch.addResult(fileClassName, "DataAbstractionCoupling", DataAbstractionCoupling.run(currentClass, allClasses, extractJavaFiles.getParentFiles()));
 				}
 				allClasses.clear();
 				
