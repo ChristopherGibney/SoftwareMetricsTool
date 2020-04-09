@@ -1,12 +1,8 @@
 package softwaremetrics;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Map.Entry;
-import java.util.AbstractMap.SimpleEntry;
 
 import softwaremetricshelperclasses.ExtractClassAttributesAccessedByMethod;
-import softwaremetricshelperclasses.ExtractClassesFromFile;
 import softwaremetricshelperclasses.ExtractDuplicateClassAttributesOfMethod;
 import softwaremetricshelperclasses.InnerClassOfFile;
 

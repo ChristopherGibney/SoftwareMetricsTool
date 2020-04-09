@@ -6,13 +6,6 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 
-import parser.GitJavaFile;
-import parser.ParseDirectory;
-import softwaremetrics.LinesOfCode;
-
-import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-
 public class AnalysisRunner {
 
 	public static void main(String[] args) throws IOException, InvalidRemoteException, GitAPIException {
