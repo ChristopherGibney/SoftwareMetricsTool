@@ -29,7 +29,7 @@ public class SensitiveClassCohesion {
 				sumSensitiveMethodSimilarities += ((methodPairIntersection / minMethodAttributes)*(methodPairUnion/numAttributes));
 			}
 		}
-			
+		
 		double sensitiveClassCohesionResult = (2 * (sumSensitiveMethodSimilarities)) / (numMethods * (numMethods - 1));
 		
 		return sensitiveClassCohesionResult;

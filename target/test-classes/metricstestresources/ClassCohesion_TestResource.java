@@ -1,18 +1,14 @@
 
-public class testLCOM5 {
-	
+public class ClassCohesion_TestResource {
 	public int publicAttributeInt1, publicAttributeInt2;
 	private String privateAttributeString1;
 	private static int privateStaticAttribute1;
-
-	public testLCOM5() {
-		int constructorInt1, constructorInt2;
-	}
 	
 	public void method1() {
 		double publicMethod1double, publicAttributeInt1;
 		publicAttributeInt1 = 0;
 		privateAttributeString1 = "test";
+		ClassCohesion_TestResource.privateStaticAttribute1 = 0;
 	}
 	
 	private void method2() {
@@ -25,6 +21,6 @@ public class testLCOM5 {
 	private static void method3() {
 		int privateStaticAttribute1;
 		privateStaticAttribute1 = 0;
-		testLCOM5.privateStaticAttribute1 = 0;
+		ClassCohesion_TestResource.privateStaticAttribute1 = 0;
 	}
 }

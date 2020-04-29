@@ -13,8 +13,6 @@ public class AfferentCoupling {
 				if (!dependantClass.getPackageName().equals(currentClass.getPackageName())) {
 					if (!afferentClasses.contains(dependantClass)) {
 						afferentClasses.add(dependantClass);
-						System.out.println("Afferent " + currentClass.getClassName() + " " + dependantClass.getClassName());
-						System.out.println("Packages " + currentClass.getPackageName() + " " + dependantClass.getPackageName());
 					}
 				}
 			}

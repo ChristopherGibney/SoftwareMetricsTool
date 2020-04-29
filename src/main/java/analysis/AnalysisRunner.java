@@ -2,6 +2,7 @@ package analysis;
 
 import java.io.IOException;
 
+import analysis.UserInput;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;

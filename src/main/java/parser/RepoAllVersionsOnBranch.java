@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 
+import results.ApplicationLevelResults;
 import results.ClassResultsMap;
 
 public class RepoAllVersionsOnBranch {
@@ -21,7 +23,6 @@ public class RepoAllVersionsOnBranch {
 	private ArrayList<File> repoAllVersions = new ArrayList<File>();
 	private ArrayList<ArrayList<File>> javaFiles = new ArrayList<ArrayList<File>>();
 	private ClassResultsMap classResultsMap = new ClassResultsMap();
-	private Map<String, Map<String, List<Double>>> allClassResults = new HashMap<>();
 	
 	public RepoAllVersionsOnBranch(Repository r, Ref branch, Iterable<RevCommit> commits) {
 		this.repo = r;
@@ -36,11 +37,11 @@ public class RepoAllVersionsOnBranch {
 	public void addJavaFiles(ArrayList<File> files){
 		javaFiles.add(files);
 	}
-	public void addResult(String fileClassName, String metric, Double result) {
-		classResultsMap.addResult(fileClassName, metric, result);
+	public void addResult(String fileClassName, String metric, Double result, Integer repoVersion) {
+		classResultsMap.addResult(fileClassName, metric, result, repoVersion);
 	}
-	public Map<String, Map<String, List<Double>>> getResults() {
-		return classResultsMap.getResults();
+	public ClassResultsMap getResults() {
+		return classResultsMap;
 	}
 	public ArrayList<File> getAllRepoVersionsOnBranch() {
 		return this.repoAllVersions;

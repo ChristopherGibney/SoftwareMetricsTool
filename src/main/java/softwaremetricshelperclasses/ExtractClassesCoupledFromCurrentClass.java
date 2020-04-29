@@ -15,7 +15,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
 public class ExtractClassesCoupledFromCurrentClass {
-	public static void extract(File fileDir, InnerClassOfFile currentClass, ArrayList<InnerClassOfFile> allClasses, ArrayList<File> parentFiles) throws FileNotFoundException {
+	public static void extract(InnerClassOfFile currentClass, ArrayList<InnerClassOfFile> allClasses, ArrayList<File> parentFiles) {
 		
 		for (MethodCallExpr methodRef : currentClass.getClassOrInterfaceDeclaration().findAll(MethodCallExpr.class)) {
 			for (int i = 0; i < parentFiles.size(); i++) {

@@ -77,7 +77,7 @@ public class ParseGitRepo {
 		
 	}
 	
-	//returns commits for a file as an arraylist, order is most recent->least recent
+	//returns commits for a file as an array list, order is most recent->least recent
 	private static ArrayList<RevCommit> allCommitsForFile(File file, Git git, String repoName) throws NoHeadException, GitAPIException {
 		ArrayList<RevCommit> commits = new ArrayList<RevCommit>();
 		String path = getRepoRelativePath(file, repoName);
