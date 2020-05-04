@@ -11,17 +11,14 @@ import java.util.AbstractMap.SimpleEntry;
 public class ApplicationLevelResults {
 	
 	public void normalizeAllResults() {
-		for (List<Double> lcom5List : LCOM5Results) {
-			for (int i = 0; i < lcom5List.size(); i++) {
-				lcom5List.set(i, (1-(lcom5List.get(i) - lcom5Min)/(lcom5Max - lcom5Min)));
-			}
-		}
+		normalizeList(LCOM5Results, lcom5Max, lcom5Min);
 		normalizeList(classCohesionResults, classCohesionMax, classCohesionMin);
 		normalizeList(sensitiveClassCohesionResults, sensitiveClassCohesionMax, sensitiveClassCohesionMin);
 		normalizeList(CBOResults, CBOMax, CBOMin);
 		normalizeList(DACResults, DACMax, DACMin);
 		normalizeList(afferentResults, afferentMax, afferentMin);
 		normalizeList(efferentResults, efferentMax, efferentMin);
+		normalizeList(packageCohesionResults, packageCohesionMax, packageCohesionMin);
 	}
 	public void averageListsAtIndex(int index) {
 		int listSize = getSizeOfListsInResults() - 1;
@@ -59,9 +56,13 @@ public class ApplicationLevelResults {
 			Entry<Integer, Double> newEntry = new SimpleEntry<>(listSize-index, averageList(efferentResults.get(index)));
 			finalEfferentResults.add(newEntry);
 		}
+		if (!packageCohesionResults.get(index).isEmpty()) {
+			Entry<Integer, Double> newEntry = new SimpleEntry<>(listSize-index, averageList(packageCohesionResults.get(index)));
+			finalPackageCohesionResults.add(newEntry);
+		}
 	}
-	private Double averageList(List<Double> metricResults) {
-		Double resultSum = 0.0;
+	private double averageList(List<Double> metricResults) {
+		double resultSum = 0.0;
 		for (Double metricValue : metricResults) {
 			resultSum += metricValue;
 		}
@@ -70,7 +71,12 @@ public class ApplicationLevelResults {
 	private void normalizeList(ArrayList<List<Double>> metricResults, Double metricMax, Double metricMin) {
 		for (List<Double> resultList : metricResults) {
 			for (int i = 0; i < resultList.size(); i++) {
-				resultList.set(i, ((resultList.get(i) - metricMin)/(metricMax-metricMin)));
+				if (metricMax == 0) {
+					resultList.set(i, 0.0);
+				}
+				else {
+					resultList.set(i, ((resultList.get(i) - metricMin)/(metricMax-metricMin)));
+				}
 			}
 		}
 	}
@@ -158,6 +164,18 @@ public class ApplicationLevelResults {
 			}
 		}
 	}
+	public void addPackageCohesionResults(List<Double> results) {
+		packageCohesionResults.add(results);
+		if (!results.isEmpty()) {
+			double resultsMax = Collections.max(results), resultsMin = Collections.min(results);
+			if (packageCohesionMax < resultsMax) {
+				packageCohesionMax = resultsMax;
+			}
+			if (packageCohesionMin > resultsMin) {
+				packageCohesionMin = resultsMin;
+			}
+		}
+	}
 	public int getSizeOfListsInResults() {
 		//guaranteed to have same number of lists in each array list of results as array lists 
 		//of results for each metric are added at the same time therefore can use size of any of the results array lists
@@ -172,6 +190,7 @@ public class ApplicationLevelResults {
 		finalResults.put("DataAbstractionCoupling", finalDACResults);
 		finalResults.put("AfferentCoupling", finalAfferentResults);
 		finalResults.put("EfferentCoupling", finalEfferentResults);
+		finalResults.put("PackageCohesion", finalPackageCohesionResults);
 		return finalResults;
 	}
 	
@@ -182,6 +201,7 @@ public class ApplicationLevelResults {
 	private ArrayList<List<Double>> DACResults = new ArrayList<>();
 	private ArrayList<List<Double>> afferentResults = new ArrayList<>();
 	private ArrayList<List<Double>> efferentResults = new ArrayList<>();
+	private ArrayList<List<Double>> packageCohesionResults = new ArrayList<>();
 	private ArrayList<Entry<Integer, Double>> finalLCOM5Results = new ArrayList<>();
 	private ArrayList<Entry<Integer, Double>> finalClassCohesionResults = new ArrayList<>();
 	private ArrayList<Entry<Integer, Double>> finalSensitiveClassCohesionResults = new ArrayList<>();
@@ -189,7 +209,8 @@ public class ApplicationLevelResults {
 	private ArrayList<Entry<Integer, Double>> finalDACResults = new ArrayList<>();
 	private ArrayList<Entry<Integer, Double>> finalAfferentResults = new ArrayList<>();
 	private ArrayList<Entry<Integer, Double>> finalEfferentResults = new ArrayList<>();
+	private ArrayList<Entry<Integer, Double>> finalPackageCohesionResults = new ArrayList<>();
 	//needed for normalizing data
-	private double lcom5Max = 0, classCohesionMax = 0, sensitiveClassCohesionMax = 0, CBOMax = 0, DACMax = 0, afferentMax = 0, efferentMax = 0;
-	private double lcom5Min = 0, classCohesionMin = 0, sensitiveClassCohesionMin = 0, CBOMin = 0, DACMin = 0, afferentMin = 0, efferentMin = 0;
+	private double lcom5Max = 0, classCohesionMax = 0, sensitiveClassCohesionMax = 0, CBOMax = 0, DACMax = 0, afferentMax = 0, efferentMax = 0, packageCohesionMax = 0;
+	private double lcom5Min = 0, classCohesionMin = 0, sensitiveClassCohesionMin = 0, CBOMin = 0, DACMin = 0, afferentMin = 0, efferentMin = 0, packageCohesionMin = 0;
 }

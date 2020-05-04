@@ -19,7 +19,6 @@ public class EfferentCoupling {
 		}
 		
 		double efferentClassCount = efferentClasses.size();
-		efferentClasses.clear();
 		return efferentClassCount;
 	}
 }

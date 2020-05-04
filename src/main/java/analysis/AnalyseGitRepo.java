@@ -15,9 +15,10 @@ import parser.ExtractJavaFiles;
 import parser.ParseGitRepo;
 import parser.RepoAllVersionsOnBranch;
 import results.ApplicationLevelResults;
-import results.HandleResults;
+import results.HandleGitResults;
 import softwaremetrics.AfferentCoupling;
 import softwaremetrics.ApplicationLevelMetric;
+import softwaremetrics.PackageCohesion;
 import softwaremetrics.ClassCohesion;
 import softwaremetrics.CouplingBetweenObjectClasses;
 import softwaremetrics.DataAbstractionCoupling;
@@ -30,23 +31,26 @@ import softwaremetricshelperclasses.InnerClassOfFile;
 
 public class AnalyseGitRepo {
 
-	public static void analyseGitRepo(File repoFile, Git git, String directoriesPath) throws IOException, InvalidRemoteException, GitAPIException {
-		ParseGitRepo gitRepo = new ParseGitRepo(repoFile, git, directoriesPath);
+	public static void analyseGitRepo(File repoFile, Git git, String directoriesPath, boolean remote) throws IOException, InvalidRemoteException, GitAPIException {
+		ParseGitRepo gitRepo = new ParseGitRepo(repoFile, git, directoriesPath, remote);
 		//ArrayList<GitJavaFile> filesWithCommits = gitRepo.getFilesWithCommits();
 		ArrayList<RepoAllVersionsOnBranch> repoAllVersionsAllBranches = gitRepo.getRepoAllVersionsAllBranches();
+		String resultsDirPath = directoriesPath + "//SoftwareMetricsToolResults";
 		
 		//for each  branch
 		for (RepoAllVersionsOnBranch branch : repoAllVersionsAllBranches) {
 			//combination of all classes on this branch over the evolution of the branch
 			ApplicationLevelResults applicationLevelResults = new ApplicationLevelResults();
 			String branchName = branch.getBranchSimpleName()+"/";
+			String resultsString = "";
 			//used to track results
 			int repoVersion = branch.getAllRepoVersionsOnBranch().size()-1;
 			
 			//for each version of the repo on the branch
 			for (File repoVersionDirectory : branch.getAllRepoVersionsOnBranch()) {
 				List<Double> LCOM5All = new ArrayList<>(), classCohesionAll= new ArrayList<>(), sensitiveClassCohesionAll = new ArrayList<>(), 
-						DACAll = new ArrayList<>(), CBOAll = new ArrayList<>(), afferentAll = new ArrayList<>(), efferentAll = new ArrayList<>();
+						DACAll = new ArrayList<>(), CBOAll = new ArrayList<>(), afferentAll = new ArrayList<>(), efferentAll = new ArrayList<>(),
+						packageCohesionAll = new ArrayList<>();
 				System.out.println(repoVersionDirectory.getAbsolutePath());
 				ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(repoVersionDirectory);
 				ExtractClassesAndPackages classesAndPackages = new ExtractClassesAndPackages(extractJavaFiles.getJavaFiles(), branchName);
@@ -70,7 +74,7 @@ public class AnalyseGitRepo {
 					if (!classCohesionResult.isNaN() && !classCohesionResult.isInfinite()) {
 						classCohesionAll.add(classCohesionResult*classWeighting);
 					}
-					branch.addResult(fileClassName, "ClassCohesion", classCohesionResult, repoVersion);
+					branch.addResult(fileClassName, "ClassCohesion", classCohesionResult.doubleValue(), repoVersion);
 					
 					Double sensitiveClassCohesionResult = SensitiveClassCohesion.run(currentClass);
 					if (!sensitiveClassCohesionResult.isNaN() && !sensitiveClassCohesionResult.isInfinite()) {
@@ -79,15 +83,11 @@ public class AnalyseGitRepo {
 					branch.addResult(fileClassName, "SensitiveClassCohesion", sensitiveClassCohesionResult, repoVersion);
 					
 					Double DACResult = DataAbstractionCoupling.run(currentClass, classesAndPackages.getAllClasses(), extractJavaFiles.getParentFiles());
-					if (!DACResult.isNaN() && !DACResult.isInfinite()) {
-						DACAll.add(DACResult*classWeighting);
-					}
+					DACAll.add(DACResult*classWeighting);
 					branch.addResult(fileClassName, "DataAbstractionCoupling", DACResult, repoVersion);
 					
 					Double CBOResult = CouplingBetweenObjectClasses.run(currentClass);
-					if (!CBOResult.isNaN() && !CBOResult.isInfinite()) {
-						CBOAll.add(CBOResult*classWeighting);
-					}
+					CBOAll.add(CBOResult*classWeighting);
 					branch.addResult(fileClassName, "CouplingBetweenObjectClasses", CBOResult, repoVersion);
 				}
 				for (String packageKey : classesAndPackages.getAllPackages().keySet()) {
@@ -95,16 +95,16 @@ public class AnalyseGitRepo {
 					double packageWeighting = classesAndPackages.getAllPackages().get(packageKey).size();
 					
 					Double afferentResult = AfferentCoupling.run(classesAndPackages.getAllPackages().get(packageKey));
-					if (!afferentResult.isNaN() && !afferentResult.isInfinite()) {
-						afferentAll.add(afferentResult*packageWeighting);
-					}
+					afferentAll.add(afferentResult*packageWeighting);
 					branch.addResult(branchPackageName, "AfferentCoupling", afferentResult, repoVersion);
 					
 					Double efferentResult = EfferentCoupling.run(classesAndPackages.getAllPackages().get(packageKey));
-					if (!efferentResult.isNaN() && !efferentResult.isInfinite()) {
-						efferentAll.add(efferentResult*packageWeighting);
-					}
+					efferentAll.add(efferentResult*packageWeighting);
 					branch.addResult(branchPackageName, "EfferentCoupling", efferentResult, repoVersion);
+					
+					Double packageCohesionResult = PackageCohesion.run(classesAndPackages.getAllPackages().get(packageKey));
+					packageCohesionAll.add(packageCohesionResult*packageWeighting);
+					branch.addResult(branchPackageName, "PackageCohesion", packageCohesionResult, repoVersion);
 					
 				}
 				applicationLevelResults.addLCOM5Results(LCOM5All);
@@ -114,8 +114,9 @@ public class AnalyseGitRepo {
 				applicationLevelResults.addDACResults(DACAll);
 				applicationLevelResults.addAfferentResults(afferentAll);
 				applicationLevelResults.addEfferentResults(efferentAll);
-				classesAndPackages.getAllClasses().clear();
+				applicationLevelResults.addPackageCohesionResults(packageCohesionAll);
 				
+				classesAndPackages.getAllClasses().clear();
 				repoVersion--;
 			}
 			for (String classKey : branch.getResults().getResults().keySet()) {
@@ -125,8 +126,7 @@ public class AnalyseGitRepo {
 				//System.out.println("\n");
 			}
 			ApplicationLevelMetric.run(applicationLevelResults);
-			HandleResults.gitRepoResults(branch, applicationLevelResults, directoriesPath);
+			HandleGitResults.gitRepoResults(branch, applicationLevelResults, resultsDirPath);
 		}
 	}
-
 }

@@ -17,7 +17,7 @@ public class AnalysisRunner {
 		}
 		if (userInput.localGitRepo) {
 			Git git = Git.open(userInput.rootFile);
-			AnalyseGitRepo.analyseGitRepo(userInput.rootFile, git, userInput.directoriesPath);
+			AnalyseGitRepo.analyseGitRepo(userInput.rootFile, git, userInput.directoriesPath, false);
 		}
 		if (userInput.remoteGitRepo) {
 			Git git = Git.cloneRepository()
@@ -25,7 +25,7 @@ public class AnalysisRunner {
 					.setDirectory(userInput.rootFile)
 					.setCloneAllBranches(true)
 					.call();
-			AnalyseGitRepo.analyseGitRepo(userInput.rootFile, git, userInput.directoriesPath);
+			AnalyseGitRepo.analyseGitRepo(userInput.rootFile, git, userInput.directoriesPath, true);
 		}
 	}
 	

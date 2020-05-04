@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import org.apache.commons.io.*;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.NoHeadException;
@@ -18,47 +19,24 @@ public class ParseGitRepo {
 	private ArrayList<GitJavaFile> filesWithCommits = new ArrayList<GitJavaFile>();
 	private ArrayList<RepoAllVersionsOnBranch> repoAllVersionsAllBranches = new ArrayList<RepoAllVersionsOnBranch>();
 	
-	public ParseGitRepo(File repoFile, Git git, String directoriesPath) throws InvalidRemoteException, GitAPIException, IOException {
-		/*ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(repoFile);
-		ArrayList<File> repoJavaFiles = extractJavaFiles.getJavaFiles();
-		
-		File dirForCopiedFiles = new File(directoriesPath + "//SoftwareMetricsToolFileVersions");
-		dirForCopiedFiles.mkdir();
-		
-		for (File f : repoJavaFiles) {
-			ArrayList<RevCommit> commits = allCommitsForFile(f, git, repoFile.getName());
-			filesWithCommits.add(new GitJavaFile(f, commits));
+	public ParseGitRepo(File repoFile, Git git, String directoriesPath, boolean remote) throws InvalidRemoteException, GitAPIException, IOException {
+		File dirForCopiedRepos = new File(directoriesPath + "//SoftwareMetricsToolRepoVersions");
+		if (!dirForCopiedRepos.mkdirs()) {
+			System.out.println("Please delete SoftwareMetricsToolRepoVersions directory");
 		}
-		
-		for (GitJavaFile fwc : filesWithCommits) {
-			File f = fwc.getRepoFile();
-			int fileCounter = 0;
-			String filePath = getRepoRelativePath(f, repoFile.getName());
-			ArrayList<RevCommit> commits = fwc.getCommits();
-			//System.out.println("**************** " + f.getAbsolutePath().replace("\\", "/"));
-			
-			for (RevCommit c : commits) {
-				//ExtractJavaFiles ejf = new ExtractJavaFiles(repo.getWorkTree());
-				git.checkout().setName(c.getName()).call();
-				Repository currentRepo = git.checkout().setName(c.getName()).getRepository();
-				
-				File checkedOutFile = new File(currentRepo.getWorkTree(), filePath);
-				String newFilePath = directoriesPath + "//SoftwareMetricsToolFileVersions//"
-						+ f.getName().substring(0, f.getName().indexOf("."))
-											+ String.valueOf(fileCounter) + ".java";
-				fileCounter++;
-				File destination = new File(newFilePath);
-				destination.createNewFile();
-				Files.copy(checkedOutFile, destination);
-				fwc.addVersionOfFile(destination);
-				//System.out.println(f.getAbsolutePath() + "----" + c.getFullMessage() + c.getCommitTime());
-			}
-		}*/
-		
-		for (Ref branch : git.branchList().call()) {
+		ArrayList<Ref> branches = new ArrayList<>();
+		if (remote) {
+			branches.addAll(git.branchList().setListMode(ListMode.REMOTE).call());
+		}
+		else {
+			branches.addAll(git.branchList().call());
+		}
+		for (Ref branch : branches) {
+			System.out.println(branch.getName());
+		}
+		for (Ref branch : branches) {
+			System.out.println(branch.getName());
 			int repoCounter = 0;
-			File dirForCopiedRepos = new File(directoriesPath + "//SoftwareMetricsToolRepoVersions");
-			dirForCopiedRepos.mkdir();
 			Iterable<RevCommit> repoAllCommits = git.log().add(git.getRepository().resolve(branch.getName())).call();
 			RepoAllVersionsOnBranch currentBranchAllVersions = new RepoAllVersionsOnBranch(git.getRepository(), branch, repoAllCommits);
 			
@@ -67,7 +45,9 @@ public class ParseGitRepo {
 				git.checkout().setName(commit.getName()).call();
 				String repoName = directoriesPath + "//SoftwareMetricsToolRepoVersions//Repo" + currentBranchAllVersions.getBranchSimpleName() + String.valueOf(repoCounter);
 				File oldRepoVersion = new File(repoName);
-				oldRepoVersion.mkdir();
+				if (!oldRepoVersion.mkdirs()) {
+					System.out.println("Please delete SoftwareMetricsToolRepoVersions directory");
+				}
 				FileUtils.copyDirectory(repoFile, oldRepoVersion);
 				currentBranchAllVersions.addVersionOfRepo(oldRepoVersion);
 				repoCounter++;
