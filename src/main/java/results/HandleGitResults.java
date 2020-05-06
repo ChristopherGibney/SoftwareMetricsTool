@@ -2,16 +2,14 @@ package results;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import parser.ParseGitRepo;
 import parser.RepoAllVersionsOnBranch;
 
 import org.jfree.chart.ChartFactory;
@@ -97,5 +95,5 @@ public class HandleGitResults {
 			createPNGResultsGraph(classResultPath, classKey, xAxis, yAxis, graphData);
 		}
 	}
-	private static Color[] colors = {Color.CYAN, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.RED, Color.YELLOW, Color.BLUE};
+	private static Color[] colors = {Color.CYAN, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.RED, Color.YELLOW, Color.BLUE, Color.PINK};
 }

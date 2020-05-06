@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import softwaremetrics.ClassCohesion;
 import softwaremetrics.SensitiveClassCohesion;
 import softwaremetricshelperclasses.ExtractClassesFromFile;
 import softwaremetricshelperclasses.InnerClassOfFile;

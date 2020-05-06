@@ -1,9 +1,6 @@
 package softwaremetrics;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Map.Entry;
-import java.util.AbstractMap.SimpleEntry;
 
 import softwaremetricshelperclasses.InnerClassOfFile;
 

@@ -2,16 +2,11 @@ package parser;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 
-import results.ApplicationLevelResults;
 import results.ClassResultsMap;
 
 public class RepoAllVersionsOnBranch {

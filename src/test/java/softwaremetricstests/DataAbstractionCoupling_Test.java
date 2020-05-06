@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import softwaremetrics.CouplingBetweenObjectClasses;
 import softwaremetrics.DataAbstractionCoupling;
 import softwaremetricshelperclasses.ExtractClassesFromFile;
 import softwaremetricshelperclasses.InnerClassOfFile;
@@ -36,16 +35,16 @@ public class DataAbstractionCoupling_Test {
 			double dacResultA = 0, dacResultB = 0, dacResultC = -1, emptyClassResult = -1.0;
 			for (InnerClassOfFile currentClass : dacClasses) {
 				if (currentClass.getClassName().equals("DataAbstractionCoupling_TestResourceA")) {
-					dacResultA = DataAbstractionCoupling.run(currentClass, dacClasses, parentFiles);
+					dacResultA = DataAbstractionCoupling.run(currentClass, dacClasses);
 				}
 				else if (currentClass.getClassName().equals("DataAbstractionCoupling_TestResourceB")) {
-					dacResultB = DataAbstractionCoupling.run(currentClass, dacClasses, parentFiles);
+					dacResultB = DataAbstractionCoupling.run(currentClass, dacClasses);
 				}
 				else if (currentClass.getClassName().equals("DataAbstractionCoupling_TestResourceC")) {
-					dacResultC = DataAbstractionCoupling.run(currentClass, dacClasses, parentFiles);
+					dacResultC = DataAbstractionCoupling.run(currentClass, dacClasses);
 				}
 				else if (currentClass.getClassName().equals("EmptyClass")) {
-					emptyClassResult = DataAbstractionCoupling.run(currentClass, dacClasses, parentFiles);
+					emptyClassResult = DataAbstractionCoupling.run(currentClass, dacClasses);
 				}
 			}
 			assertEquals(4.0, dacResultA, 0.0);

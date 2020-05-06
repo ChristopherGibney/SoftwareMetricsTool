@@ -10,7 +10,6 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -32,10 +31,6 @@ public class ParseGitRepo {
 			branches.addAll(git.branchList().call());
 		}
 		for (Ref branch : branches) {
-			System.out.println(branch.getName());
-		}
-		for (Ref branch : branches) {
-			System.out.println(branch.getName());
 			int repoCounter = 0;
 			Iterable<RevCommit> repoAllCommits = git.log().add(git.getRepository().resolve(branch.getName())).call();
 			RepoAllVersionsOnBranch currentBranchAllVersions = new RepoAllVersionsOnBranch(git.getRepository(), branch, repoAllCommits);
@@ -54,28 +49,27 @@ public class ParseGitRepo {
 			}
 			repoAllVersionsAllBranches.add(currentBranchAllVersions);
 		}
-		
+		git.getRepository().close();
 	}
 	
-	//returns commits for a file as an array list, order is most recent->least recent
-	private static ArrayList<RevCommit> allCommitsForFile(File file, Git git, String repoName) throws NoHeadException, GitAPIException {
-		ArrayList<RevCommit> commits = new ArrayList<RevCommit>();
-		String path = getRepoRelativePath(file, repoName);
-		Iterable<RevCommit> commitLog = git.log().addPath(path).call();
-		
-		for (RevCommit commit : commitLog) {
-			commits.add(commit);
+	public static void clearTempDirs(String dirsPath, boolean remote) {
+		File dirForCopiedRepos = new File(dirsPath + "//SoftwareMetricsToolRepoVersions");
+		dirForCopiedRepos.mkdirs();
+		try {
+			FileUtils.deleteDirectory(dirForCopiedRepos);
+		} catch (IOException e) {
+			System.out.println("Error when deleting temp directory " + dirsPath + "\\\\SoftwareMetricsToolRepoVersions");
 		}
-		return commits;
-	}
-	
-	//need repo relative path for file to access logs
-	private static String getRepoRelativePath(File f, String repoName) {
-		String path = f.getAbsolutePath().replace("\\", "/");
-		int index1 = path.indexOf(repoName) + repoName.length() + 1;
-		int index2 = path.length();
-		path = path.substring(index1, index2);
-		return path;
+		//only want to delete repo local file if it is a remote file created by the tool
+		if (remote) {
+			File dirForClonedRepo = new File(dirsPath + "\\SoftwareMetricsToolRepo");
+			dirForClonedRepo.mkdirs();
+			try {
+				FileUtils.forceDelete(dirForClonedRepo);
+			} catch (IOException e) {
+				System.out.println("Error when deleting temp directory " + dirsPath + "\\\\SoftwareMetricsToolRepo");
+			}
+		}
 	}
 	
 	public ArrayList<GitJavaFile> getFilesWithCommits() {

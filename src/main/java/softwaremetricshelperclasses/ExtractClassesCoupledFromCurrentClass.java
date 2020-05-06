@@ -1,7 +1,6 @@
 package softwaremetricshelperclasses;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import com.github.javaparser.ast.expr.FieldAccessExpr;

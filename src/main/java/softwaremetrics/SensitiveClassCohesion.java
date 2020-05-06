@@ -1,12 +1,8 @@
 package softwaremetrics;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
 
-import softwaremetricshelperclasses.ExtractClassesFromFile;
 import softwaremetricshelperclasses.InnerClassOfFile;
 import softwaremetricshelperclasses.MethodPairIntersectionAndUnion;
 

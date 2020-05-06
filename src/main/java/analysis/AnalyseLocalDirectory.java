@@ -4,14 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import parser.ExtractClassesAndPackages;
 import parser.ExtractJavaFiles;
 import results.ApplicationLevelResults;
 import results.ClassResultsMap;
-import results.HandleGitResults;
 import results.HandleLocalResults;
 import softwaremetrics.AfferentCoupling;
 import softwaremetrics.ApplicationLevelMetric;
@@ -68,7 +65,7 @@ public class AnalyseLocalDirectory {
 			classResultsMap.addResult(fileClassName, "CouplingBetweenObjectClasses", cboResult, 0);
 			CBOAll.add(cboResult*classWeighting);
 			
-			Double dacResult = DataAbstractionCoupling.run(currentClass, classesAndPackages.getAllClasses(), extractJavaFiles.getParentFiles());
+			Double dacResult = DataAbstractionCoupling.run(currentClass, classesAndPackages.getAllClasses());
 			classResultsMap.addResult(fileClassName, "DataAbstractionCoupling", dacResult, 0);
 			DACAll.add(dacResult*classWeighting);
 			
@@ -80,15 +77,15 @@ public class AnalyseLocalDirectory {
 			
 			Double afferentResult = AfferentCoupling.run(classesAndPackages.getAllPackages().get(packageKey));
 			classResultsMap.addResult(branchPackageName, "AfferentCoupling", afferentResult, 0);
-			afferentAll.add(afferentResult);
+			afferentAll.add(afferentResult*packageWeighting);
 			
 			Double efferentResult = EfferentCoupling.run(classesAndPackages.getAllPackages().get(packageKey));
 			classResultsMap.addResult(packageKey, "EfferentCoupling", efferentResult, 0);
-			efferentAll.add(efferentResult);
+			efferentAll.add(efferentResult*packageWeighting);
 			
 			Double packageCohesionResult = PackageCohesion.run(classesAndPackages.getAllPackages().get(packageKey));
 			classResultsMap.addResult(packageKey, "PackageCohesion", packageCohesionResult, 0);
-			packageCohesionAll.add(packageCohesionResult);
+			packageCohesionAll.add(packageCohesionResult*packageWeighting);
 			
 		}
 		
@@ -105,15 +102,6 @@ public class AnalyseLocalDirectory {
 		
 		ApplicationLevelMetric.run(applicationLevelResults);
 		HandleLocalResults.localDirResults(classResultsMap, applicationLevelResults, resultsFilePath);
-		
-		Map<String, Map<String, List<Entry<Integer, Double>>>> classResults = classResultsMap.getResults();
-		for (String classKey : classResults.keySet()) {
-			Map<String, List<Entry<Integer, Double>>> metricResults = classResults.get(classKey);
-			for (String metricKey : metricResults.keySet()) {
-				//System.out.println(classKey + " " + metricKey + metricResults.get(metricKey).toString()); 
-			}
-			//System.out.println("\n");
-		}
 	}
 
 }

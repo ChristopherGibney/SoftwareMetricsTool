@@ -3,7 +3,6 @@ package analysis;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jgit.api.Git;
@@ -42,7 +41,6 @@ public class AnalyseGitRepo {
 			//combination of all classes on this branch over the evolution of the branch
 			ApplicationLevelResults applicationLevelResults = new ApplicationLevelResults();
 			String branchName = branch.getBranchSimpleName()+"/";
-			String resultsString = "";
 			//used to track results
 			int repoVersion = branch.getAllRepoVersionsOnBranch().size()-1;
 			
@@ -82,7 +80,7 @@ public class AnalyseGitRepo {
 					}
 					branch.addResult(fileClassName, "SensitiveClassCohesion", sensitiveClassCohesionResult, repoVersion);
 					
-					Double DACResult = DataAbstractionCoupling.run(currentClass, classesAndPackages.getAllClasses(), extractJavaFiles.getParentFiles());
+					Double DACResult = DataAbstractionCoupling.run(currentClass, classesAndPackages.getAllClasses());
 					DACAll.add(DACResult*classWeighting);
 					branch.addResult(fileClassName, "DataAbstractionCoupling", DACResult, repoVersion);
 					
@@ -119,14 +117,9 @@ public class AnalyseGitRepo {
 				classesAndPackages.getAllClasses().clear();
 				repoVersion--;
 			}
-			for (String classKey : branch.getResults().getResults().keySet()) {
-				for (String metricKey : branch.getResults().getResults().get(classKey).keySet()) {
-					//System.out.println(classKey + " " + metricKey + branch.getResults().getResults().get(classKey).get(metricKey).toString()); 
-				}
-				//System.out.println("\n");
-			}
 			ApplicationLevelMetric.run(applicationLevelResults);
 			HandleGitResults.gitRepoResults(branch, applicationLevelResults, resultsDirPath);
 		}
+		ParseGitRepo.clearTempDirs(directoriesPath, remote);
 	}
 }
