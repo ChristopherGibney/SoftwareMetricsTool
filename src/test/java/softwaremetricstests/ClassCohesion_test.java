@@ -12,7 +12,7 @@ import softwaremetrics.ClassCohesion;
 import softwaremetricshelperclasses.ExtractClassesFromFile;
 import softwaremetricshelperclasses.InnerClassOfFile;
 
-public class ClassCohesion_Test {
+public class ClassCohesion_test {
 
 	@Test
 	public void testClassCohesionNormalClass() {
