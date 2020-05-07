@@ -5,7 +5,7 @@ public class LCOM5_TestResource {
 	private String privateAttributeString1;
 	private static int privateStaticAttribute1;
 
-	public testLCOM5() {
+	public LCOM5_TestResource() {
 		int constructorInt1, constructorInt2;
 	}
 	
@@ -19,6 +19,7 @@ public class LCOM5_TestResource {
 		double privateMethod2double, publicAttributeInt2;
 		this.publicAttributeInt2 = 1;
 		publicAttributeInt1 = 0;
+		publicAttributeInt1 = 1;
 		privateAttributeString1 = "test";
 	}
 	
