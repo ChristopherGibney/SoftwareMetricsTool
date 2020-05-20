@@ -18,8 +18,8 @@ public class UserInput {
 		
 		Scanner userInput = new Scanner(new InputStreamReader(System.in));
 		
-		System.out.println("Please indicate which file type you wish to run "
-				+ "metrics on."	);
+		System.out.println("Please indicate which input type you wish to run "
+				+ "metrics analysis on."	);
 		System.out.println("Enter 1 for local directory/project, 2 for local GitHub"
 				+ " repository or 3 for remote GitHub repository: ");
 		int fileType = userInput.nextInt();
@@ -28,41 +28,38 @@ public class UserInput {
 		
 		if (fileType == 1) {
 			localDir = true;
-			System.out.println("Enter full path to local directory/project in the format: \n"
-					+ "C://Users//Chris//Desktop//LocalFile: ");
+			System.out.println("\nEnter full path to local directory/project in the format: \n"
+					+ "C://Users//Chris//Desktop//LocalProject ");
 			String localPath = userInput.nextLine();
 			rootFile = new File(localPath);
-			System.out.println("Enter path to folder where results file can be created "
-					+ "\nfor example: C:\\\\Users\\\\Chris\\\\Desktop will create SoftwareMetricsToolResults.txt on Desktop.");
+			System.out.println("\nEnter path to folder where two results files can be created "
+					+ "for example:\nC:\\\\Users\\\\Chris\\\\Desktop will create two results text files on Desktop.");
 			directoriesPath = userInput.nextLine();
 		}
 		else if (fileType == 2) {
 			localGitRepo = true;
-			System.out.println("Enter path to folder containing repo in the format:\n"
+			System.out.println("\nEnter path to folder containing repo in the format:\n"
 					+ "C:\\\\Users\\\\Chris\\\\Desktop\\\\MyRepo");
 			String repoPath = userInput.nextLine();
 			rootFile = new File(repoPath);
-			System.out.println("Enter path to folder where necessary temp directories can be created "
+			System.out.println("\nEnter path to folder where necessary temp directories can be created "
 					+ "for example: \n"
 					+ "C:\\\\Users\\\\Chris\\\\Desktop: ");
 			directoriesPath = userInput.nextLine();
 		}
 		else if (fileType == 3) {
 			remoteGitRepo = true;
-			System.out.println("Enter link to remote GitHub repo: ");
+			System.out.println("\nEnter link to remote GitHub repo for example: ");
+			System.out.println("https://github.com/ChristopherGibney/SoftwareMetricsTool");
 			repoLink = userInput.nextLine();
-			//repoLink = "https://github.com/ChristopherGibney/SoftwareMetricsTool";
-			System.out.println("Enter path to folder where necessary temp directories can be created "
+			System.out.println("\nEnter path to folder where necessary temp directories can be created "
 					+ "for example: \n"
-					+ "C:\\\\Users\\\\Chris\\\\Desktop: ");
+					+ "C:\\\\Users\\\\Chris\\\\Desktop ");
 			directoriesPath = userInput.nextLine();
 			String cloneRepoLocation = directoriesPath + "\\SoftwareMetricsToolRepo";
-			//String cloneRepoLocation = "C:\\Users\\Chris\\Desktop\\TestRepo_1";
 			rootFile = new File(cloneRepoLocation);
 		}
 		
 		userInput.close();
-		//File root = new File("C:\\Users\\Chris\\Downloads\\eclipse-java-kepler-SR1-win32-x86_64\\SoftwareMetricsTool\\src\\main\\java");
-		//File repoFile = new File("C:\\Users\\Chris\\Desktop\\TestRepo");
 	}
 }

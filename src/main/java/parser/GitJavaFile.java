@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
+/*Not used in most recent version of tool*/
+
 public class GitJavaFile {
 	private File repoFile;
 	//commits are always in order of most recent first

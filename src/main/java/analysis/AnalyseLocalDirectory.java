@@ -29,6 +29,7 @@ public class AnalyseLocalDirectory {
 		ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(localDir);
 		ClassResultsMap classResultsMap = new ClassResultsMap();
 		ExtractClassesAndPackages classesAndPackages = new ExtractClassesAndPackages(extractJavaFiles.getJavaFiles(), "");
+		System.out.println("\nAnalysing parsed files...");
 		ApplicationLevelResults applicationLevelResults = new ApplicationLevelResults();
 		
 		for (InnerClassOfFile currentClass : classesAndPackages.getAllClasses()) {

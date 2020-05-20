@@ -12,6 +12,8 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.utils.SourceRoot;
 
+/*Not used in most recent version of tool*/
+
 public class ParseDirectory {
 	
 	public static List<CompilationUnit> parse(File rootDir) {

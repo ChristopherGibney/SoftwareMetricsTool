@@ -32,7 +32,6 @@ public class AnalyseGitRepo {
 
 	public static void analyseGitRepo(File repoFile, Git git, String directoriesPath, boolean remote) throws IOException, InvalidRemoteException, GitAPIException {
 		ParseGitRepo gitRepo = new ParseGitRepo(repoFile, git, directoriesPath, remote);
-		//ArrayList<GitJavaFile> filesWithCommits = gitRepo.getFilesWithCommits();
 		ArrayList<RepoAllVersionsOnBranch> repoAllVersionsAllBranches = gitRepo.getRepoAllVersionsAllBranches();
 		String resultsDirPath = directoriesPath + "//SoftwareMetricsToolResults";
 		
@@ -43,13 +42,14 @@ public class AnalyseGitRepo {
 			String branchName = branch.getBranchSimpleName()+"/";
 			//used to track results
 			int repoVersion = branch.getAllRepoVersionsOnBranch().size()-1;
+			System.out.println("\n");
 			
 			//for each version of the repo on the branch
 			for (File repoVersionDirectory : branch.getAllRepoVersionsOnBranch()) {
 				List<Double> LCOM5All = new ArrayList<>(), classCohesionAll= new ArrayList<>(), sensitiveClassCohesionAll = new ArrayList<>(), 
 						DACAll = new ArrayList<>(), CBOAll = new ArrayList<>(), afferentAll = new ArrayList<>(), efferentAll = new ArrayList<>(),
 						packageCohesionAll = new ArrayList<>();
-				System.out.println(repoVersionDirectory.getAbsolutePath());
+				System.out.println("Analysing: " + repoVersionDirectory.getAbsolutePath());
 				ExtractJavaFiles extractJavaFiles = new ExtractJavaFiles(repoVersionDirectory);
 				ExtractClassesAndPackages classesAndPackages = new ExtractClassesAndPackages(extractJavaFiles.getJavaFiles(), branchName);
 				

@@ -60,7 +60,7 @@ public class ParseGitRepo {
 		} catch (IOException e) {
 			System.out.println("Error when deleting temp directory " + dirsPath + "\\\\SoftwareMetricsToolRepoVersions");
 		}
-		//only want to delete repo local file if it is a remote file created by the tool
+		//only want to delete repo local file if it is a remote cloned to local file created by the tool
 		if (remote) {
 			File dirForClonedRepo = new File(dirsPath + "\\SoftwareMetricsToolRepo");
 			dirForClonedRepo.mkdirs();
